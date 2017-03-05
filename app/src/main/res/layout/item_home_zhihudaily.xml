@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardBackgroundColor="@color/cardview_light_background"
+    app:cardCornerRadius="@dimen/card_round_corner">
+
+    <RelativeLayout
+        android:id="@+id/rl_home"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_card">
+
+        <ImageView
+            android:id="@+id/iv_home"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/spacing_normal"
+            tools:src="@drawable/test" />
+
+        <TextView
+            android:id="@+id/tv_home_title"
+            style="@style/titleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/iv_home"
+            tools:text="中国古代家具发展到今天有两个高峰，一个两宋一个明末（多图）" />
+    </RelativeLayout>
+
+
+</android.support.v7.widget.CardView>

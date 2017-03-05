@@ -1,5 +1,49 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="nav_header_vertical_spacing">16dp</dimen>
+    <dimen name="nav_header_height">160dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <!--font size-->
+    <dimen name="font_small">14sp</dimen> <!-- 正文/按钮文字-->
+    <dimen name="font_normal">16sp</dimen><!--小标题-->
+    <dimen name="font_large">20sp</dimen><!--Appbar文字-->
+    <dimen name="font_larger">24sp</dimen><!--大标题-->
+    <!--font size-->
+
+    <dimen name="spacing_normal">8dp</dimen>
+    <dimen name="spacing_large">16dp</dimen>
+
+    <!--typical size of views-->
+    <dimen name="edittext_normal">48dp</dimen>
+
+    <dimen name="card_round_corner">2dp</dimen>
+    <dimen name="card_spacing">8dp</dimen>
+    <dimen name="card_elevation">2dp</dimen>
+    <dimen name="card_content_spacing">16dp</dimen>
+    <dimen name="bottom_nav">48dp</dimen>
+
+    <dimen name="list_item_small">48dp</dimen><!--单行文字不带头像-->
+    <dimen name="list_item_normal">56dp</dimen><!--单行文字带带头像-->
+    <dimen name="list_item_larger">72dp</dimen><!--两行文字带头像-->
+    <dimen name="list_item_card">104dp</dimen>
+
+    <dimen name="icon_normal">24dp</dimen>
+
+    <dimen name="text_align_left">72dp</dimen>
+
+    <dimen name="profile_photo_normal">40dp</dimen><!--用户头像-->
+    <dimen name="profile_photo_large">64dp</dimen>
+
+    <dimen name="fab_normal">40dp</dimen>
+    <dimen name="fab_large">56dp</dimen>
+    <dimen name="fab_elevation">8dp</dimen>
+
+    <!--others-->
+    <dimen name="click_area">48dp</dimen>
+
+
 </resources>
