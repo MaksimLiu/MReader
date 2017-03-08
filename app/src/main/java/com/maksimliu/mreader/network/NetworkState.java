@@ -8,6 +8,10 @@ import com.maksimliu.mreader.MReaderApplication;
 
 /**
  * Created by MaksimLiu on 2017/3/4.
+ * <h3>网络状态获取类</h3>
+ * <p>
+ *     1.是否已经连接网络 {@link #isConnected()}
+ * </p>
  */
 
 public class NetworkState {
@@ -19,7 +23,7 @@ public class NetworkState {
      *
      * @return NetworkInfo
      */
-    public static NetworkInfo getNetworkInfo() {
+    private static NetworkInfo getNetworkInfo() {
 
         return ((ConnectivityManager) MReaderApplication.getContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();

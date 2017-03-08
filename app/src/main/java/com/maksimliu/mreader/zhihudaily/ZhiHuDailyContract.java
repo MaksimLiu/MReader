@@ -9,11 +9,11 @@ import com.maksimliu.mreader.base.BaseView;
 
 public interface ZhiHuDailyContract {
 
+
+
     interface View extends BaseView<Presenter>{
 
-
         void showError(String msg);
-
 
     }
 
@@ -21,7 +21,7 @@ public interface ZhiHuDailyContract {
     interface Presenter extends BasePresenter{
         void getLatestNews();
 
-        void getOldNews(String date);
+        void getOldNews(String date,int type);
         void getNewsDetail(String id);
     }
 }

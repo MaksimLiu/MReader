@@ -6,7 +6,7 @@ import io.realm.RealmObject;
  * Created by MaksimLiu on 2017/3/4.
  */
 
-public class ZhiHuDailyNews extends RealmObject {
+public class ZhiHuDailyNewsModel extends RealmObject {
 
 
     /**

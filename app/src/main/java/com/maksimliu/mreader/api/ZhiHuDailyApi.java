@@ -1,6 +1,7 @@
 package com.maksimliu.mreader.api;
 
-import com.maksimliu.mreader.bean.ZhiHuDailyLatest;
+import com.maksimliu.mreader.bean.ZhiHuDailyDetail;
+import com.maksimliu.mreader.bean.ZhiHuDailyNews;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -22,7 +23,7 @@ public interface ZhiHuDailyApi {
      * @return
      */
     @GET("news/latest")
-    Call<ZhiHuDailyLatest> getLatestNews();
+    Call<ZhiHuDailyNews> getLatestNews();
 
     /**
      * 内容获取与离线下载
@@ -32,7 +33,7 @@ public interface ZhiHuDailyApi {
      * @param id 新闻id
      */
     @GET("news/{id}")
-    Call<String> getNewsDetail(@Path("id") String id);
+    Call<ZhiHuDailyDetail> getNewsDetail(@Path("id") String id);
 
 
     /**
@@ -46,7 +47,7 @@ public interface ZhiHuDailyApi {
      * @return
      */
     @GET("news/before/{date}")
-    Call<ZhiHuDailyLatest> getOldeNews(@Path("date") String date);
+    Call<ZhiHuDailyNews> getOldeNews(@Path("date") String date);
 
 
     /**

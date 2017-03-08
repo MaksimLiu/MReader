@@ -1,18 +1,14 @@
 package com.maksimliu.mreader.zhihudaily;
 
-import android.telecom.StatusHints;
-
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.api.ZhiHuDailyApi;
-import com.maksimliu.mreader.bean.ZhiHuDailyLatest;
-import com.maksimliu.mreader.db.model.ZhiHuDailyNews;
+import com.maksimliu.mreader.bean.ZhiHuDailyDetail;
+import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.network.CacheInterceptor;
-import com.maksimliu.mreader.utils.MLog;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
@@ -46,7 +42,7 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
                 .readTimeout(5, TimeUnit.SECONDS)
                 .writeTimeout(5, TimeUnit.SECONDS)
                 .addNetworkInterceptor(new CacheInterceptor())
-                .cache(new Cache(cacheFile,1024*1024*10)) //10M缓存空间
+                .cache(new Cache(cacheFile, 1024 * 1024 * 10)) //10M缓存空间
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -74,20 +70,22 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
     @Override
     public void getLatestNews() {
 
-        MLog.i("get");
 
-        Call<ZhiHuDailyLatest> latestCall = zhiHuDailyApi.getLatestNews();
+        final EventManager.ZhiHuDailyNews event = EventManager.ZhiHuDailyNews.GET_LATEST;
 
-        latestCall.enqueue(new Callback<ZhiHuDailyLatest>() {
+        Call<com.maksimliu.mreader.bean.ZhiHuDailyNews> latestCall = zhiHuDailyApi.getLatestNews();
+
+        latestCall.enqueue(new Callback<com.maksimliu.mreader.bean.ZhiHuDailyNews>() {
             @Override
-            public void onResponse(Call<ZhiHuDailyLatest> call, Response<ZhiHuDailyLatest> response) {
+            public void onResponse(Call<com.maksimliu.mreader.bean.ZhiHuDailyNews> call, Response<com.maksimliu.mreader.bean.ZhiHuDailyNews> response) {
 
-                EventBus.getDefault().post(response.body());
+                event.setObject(response.body());
+                EventBus.getDefault().post(event);
 
             }
 
             @Override
-            public void onFailure(Call<ZhiHuDailyLatest> call, Throwable t) {
+            public void onFailure(Call<com.maksimliu.mreader.bean.ZhiHuDailyNews> call, Throwable t) {
 
 
                 view.showError("网络无法连接");
@@ -98,20 +96,30 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
     }
 
     @Override
-    public void getOldNews(String date) {
+    public void getOldNews(String date, int type) {
 
-        Call<ZhiHuDailyLatest> latestCall = zhiHuDailyApi.getOldeNews(date);
+        final EventManager.ZhiHuDailyNews event;
 
-        latestCall.enqueue(new Callback<ZhiHuDailyLatest>() {
+        if (type == 1) {
+            event = EventManager.ZhiHuDailyNews.ADD_OLD_NEWS;
+        } else {
+            event = EventManager.ZhiHuDailyNews.SET_OLD_NEWS;
+        }
+
+        Call<com.maksimliu.mreader.bean.ZhiHuDailyNews> latestCall = zhiHuDailyApi.getOldeNews(date);
+
+        latestCall.enqueue(new Callback<com.maksimliu.mreader.bean.ZhiHuDailyNews>() {
             @Override
-            public void onResponse(Call<ZhiHuDailyLatest> call, Response<ZhiHuDailyLatest> response) {
+            public void onResponse(Call<com.maksimliu.mreader.bean.ZhiHuDailyNews> call, Response<com.maksimliu.mreader.bean.ZhiHuDailyNews> response) {
 
-                EventBus.getDefault().post(response.body());
+
+                event.setObject(response.body());
+                EventBus.getDefault().post(event);
 
             }
 
             @Override
-            public void onFailure(Call<ZhiHuDailyLatest> call, Throwable t) {
+            public void onFailure(Call<com.maksimliu.mreader.bean.ZhiHuDailyNews> call, Throwable t) {
 
 
                 view.showError("网络无法连接");
@@ -123,5 +131,27 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
     @Override
     public void getNewsDetail(String id) {
 
+        final EventManager.ZhiHuDailyNewsDetail event = EventManager.ZhiHuDailyNewsDetail.GET_DETAIL;
+
+        Call<ZhiHuDailyDetail> latestCall = zhiHuDailyApi.getNewsDetail(id);
+
+        latestCall.enqueue(new Callback<ZhiHuDailyDetail>() {
+            @Override
+            public void onResponse(Call<ZhiHuDailyDetail> call, Response<ZhiHuDailyDetail> response) {
+
+                event.setObject(response.body());
+                EventBus.getDefault().post(event);
+
+            }
+
+            @Override
+            public void onFailure(Call<ZhiHuDailyDetail> call, Throwable t) {
+
+
+                view.showError("网络无法连接");
+
+            }
+        });
     }
 }
+

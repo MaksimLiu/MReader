@@ -6,30 +6,36 @@ import android.view.View;
 
 /**
  * Created by MaksimLiu on 2017/3/5.
+ * <h3><RecyclerView Item间隔类/h3>
  */
 
 public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
 
+    /**
+     * 顶部间隔
+     */
     private int top;
-    private int bottom;
+    /**
+     * 左边间隔
+     */
     private int left;
+    /**
+     * 右边间隔
+     */
     private int right;
 
-    public SpaceItemDecoration(int start, int end, int top, int bottom) {
-        this.bottom = bottom;
-        this.top = top;
-        this.left = start;
-        this.right = end;
+    public SpaceItemDecoration(int space) {
+        this.top = space;
+        this.left = space;
+        this.right = space;
     }
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
 
-
-            outRect.bottom = bottom;
-            outRect.top = top;
-            outRect.left = left;
-            outRect.right = right;
+        outRect.top = top;
+        outRect.left = left;
+        outRect.right = right;
 
     }
 }

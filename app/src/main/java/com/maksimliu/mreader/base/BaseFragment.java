@@ -3,6 +3,9 @@ package com.maksimliu.mreader.base;
 
 
 import android.app.Fragment;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.View;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -24,4 +27,12 @@ public abstract class BaseFragment extends Fragment {
         super.onStop();
         EventBus.getDefault().unregister(this);
     }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initView();
+    }
+
+    protected abstract void initView();
 }

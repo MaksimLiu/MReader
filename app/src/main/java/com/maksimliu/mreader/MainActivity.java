@@ -10,7 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.maksimliu.mreader.base.BaseActivity;
-import com.maksimliu.mreader.bean.ZhiHuDailyLatest;
+import com.maksimliu.mreader.bean.ZhiHuDailyNews;
 import com.maksimliu.mreader.utils.FragmentUtil;
 import com.maksimliu.mreader.zhihudaily.ZhiHuDailyHomeFragment;
 
@@ -29,15 +29,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
 
     @Override
-    protected void afterCreate(Bundle savedInstanceState) {
-
+    protected void initView() {
         initDrawer();
         initFragment();
+    }
+
+    @Override
+    protected void afterCreate(Bundle savedInstanceState) {
+
+
 
         if (savedInstanceState == null) {
 
-            toolbar.setTitle(getString(R.string.zhihudaily));
+
             FragmentUtil.addFragment(getFragmentManager(), zhiHuDailyHomeFragment);
+
             currentFragment = zhiHuDailyHomeFragment;
         }
     }
@@ -93,7 +99,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMainEvent(ZhiHuDailyLatest latest) {
+    public void onMainEvent(ZhiHuDailyNews latest) {
 
     }
 }

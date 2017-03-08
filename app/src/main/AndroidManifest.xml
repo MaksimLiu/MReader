@@ -6,11 +6,11 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".MReaderApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".MReaderApplication"
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
@@ -21,6 +21,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".zhihudaily.ZhiHuDailyDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".MainActivity"></activity>
     </application>
 
 </manifest>

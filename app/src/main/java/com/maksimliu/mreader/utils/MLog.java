@@ -7,6 +7,11 @@ import com.maksimliu.mreader.BuildConfig;
 /**
  * Created by MaksimLiu on 2017/3/4.
  * <h3>日志输出工具类</h3>
+ *
+ * <p>
+ *     1.默认Debug状态才输出日志
+ *     2.对NULL值进行校验输出
+ * </p>
  */
 
 public class MLog {

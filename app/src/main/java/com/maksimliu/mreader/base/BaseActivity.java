@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 
+import com.maksimliu.mreader.utils.MLog;
+
 import org.greenrobot.eventbus.EventBus;
 
 /**
@@ -17,10 +19,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
+        initView();
         EventBus.getDefault().register(this);
         afterCreate(savedInstanceState);
 
     }
+
+    protected abstract void initView();
 
     @Override
     protected void onStop() {
@@ -45,8 +50,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onKeyDown(keyCode, event);
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 
+            MLog.i("onKeyDown   "+getSupportFragmentManager().getBackStackEntryCount());
             //当后退栈最后一个Fragment执行返回键时，结束Activity，避免空白页面
-            if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
                 finish();
                 return false;
             }
