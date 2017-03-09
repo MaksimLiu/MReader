@@ -1,6 +1,7 @@
 package com.maksimliu.mreader;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -36,7 +37,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     protected void afterCreate(Bundle savedInstanceState) {
-
 
 
         if (savedInstanceState == null) {
@@ -88,6 +88,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 FragmentUtil.switchFragment(currentFragment, zhiHuDailyHomeFragment);
                 currentFragment = zhiHuDailyHomeFragment;
 
+                break;
+
+            case R.id.nav_about:
+                startActivity(new Intent(MainActivity.this, AboutActivity.class));
                 break;
         }
 

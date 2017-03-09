@@ -42,6 +42,10 @@
     <dimen name="fab_large">56dp</dimen>
     <dimen name="fab_elevation">8dp</dimen>
 
+
+    <!--Text-->
+    <dimen name="lineSpacingExtra">8dp</dimen>
+
     <!--others-->
     <dimen name="click_area">48dp</dimen>
 
