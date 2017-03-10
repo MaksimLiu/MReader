@@ -16,7 +16,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.base.BaseActivity;
-import com.maksimliu.mreader.bean.ZhiHuDailyDetail;
+import com.maksimliu.mreader.base.EventActivity;
+import com.maksimliu.mreader.bean.ZhiHuDailyDetailBean;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.utils.MLog;
 
@@ -26,7 +27,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ZhiHuDailyDetailActivity extends BaseActivity implements ZhiHuDailyContract.View {
+public class ZhiHuDailyDetailActivity extends EventActivity implements ZhiHuDailyContract.View {
 
     @BindView(R.id.toolbar_zhihu_detail)
     Toolbar toolbarZhihuDetail;
@@ -100,7 +101,7 @@ public class ZhiHuDailyDetailActivity extends BaseActivity implements ZhiHuDaily
             return;
         }
 
-        ZhiHuDailyDetail detail= (ZhiHuDailyDetail) event.getObject();
+        ZhiHuDailyDetailBean detail= (ZhiHuDailyDetailBean) event.getObject();
 
 
         Glide.with(this).load(detail.getImage()).into(ivZhihuDetail); //更新顶部图片

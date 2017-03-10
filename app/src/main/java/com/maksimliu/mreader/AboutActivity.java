@@ -1,22 +1,26 @@
 package com.maksimliu.mreader;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import com.maksimliu.mreader.base.BaseActivity;
 
-public class AboutActivity extends AppCompatActivity {
+public class AboutActivity extends BaseActivity {
 
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
+    protected void initView() {
 
+    }
 
+    @Override
+    protected void afterCreate(Bundle savedInstanceState) {
+
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_about;
     }
 
 

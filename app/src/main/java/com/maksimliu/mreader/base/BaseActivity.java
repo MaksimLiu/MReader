@@ -20,7 +20,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
         initView();
-        EventBus.getDefault().register(this);
         afterCreate(savedInstanceState);
 
     }
@@ -30,7 +29,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+
     }
 
     protected abstract void afterCreate(Bundle savedInstanceState);

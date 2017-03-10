@@ -13,7 +13,6 @@ public interface ZhiHuDailyContract {
 
     interface View extends BaseView<Presenter>{
 
-        void showError(String msg);
 
     }
 

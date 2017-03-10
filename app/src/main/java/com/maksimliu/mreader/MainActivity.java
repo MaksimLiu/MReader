@@ -11,20 +11,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.maksimliu.mreader.base.BaseActivity;
-import com.maksimliu.mreader.bean.ZhiHuDailyNews;
+import com.maksimliu.mreader.base.EventActivity;
+import com.maksimliu.mreader.bean.ZhiHuDailyNewsBean;
+import com.maksimliu.mreader.gank.GankFragment;
 import com.maksimliu.mreader.utils.FragmentUtil;
 import com.maksimliu.mreader.zhihudaily.ZhiHuDailyHomeFragment;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends EventActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
     private Toolbar toolbar;
 
+
     private ZhiHuDailyHomeFragment zhiHuDailyHomeFragment;
 
+    private GankFragment gankFragment;
 
     private Fragment currentFragment;
 
@@ -44,13 +48,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             FragmentUtil.addFragment(getFragmentManager(), zhiHuDailyHomeFragment);
 
-            currentFragment = zhiHuDailyHomeFragment;
+
         }
+
+        currentFragment = zhiHuDailyHomeFragment;
     }
 
     private void initFragment() {
 
         zhiHuDailyHomeFragment = new ZhiHuDailyHomeFragment();
+        gankFragment=new GankFragment();
+
     }
 
     private void initDrawer() {
@@ -90,6 +98,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
                 break;
 
+            case R.id.nav_gank:
+                toolbar.setTitle(R.string.gank);
+                if (currentFragment == gankFragment) {
+                    break;
+                }
+                FragmentUtil.switchFragment(currentFragment, gankFragment);
+                currentFragment = gankFragment;
+
+                break;
+
             case R.id.nav_about:
                 startActivity(new Intent(MainActivity.this, AboutActivity.class));
                 break;
@@ -103,7 +121,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMainEvent(ZhiHuDailyNews latest) {
+    public void onMainEvent(ZhiHuDailyNewsBean latest) {
 
     }
 }

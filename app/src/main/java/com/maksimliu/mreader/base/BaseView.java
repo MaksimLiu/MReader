@@ -10,5 +10,6 @@ public interface BaseView<T> {
 
     void setPresenter(T presnter);
 
+    void showError(String errorMsg);
 
 }

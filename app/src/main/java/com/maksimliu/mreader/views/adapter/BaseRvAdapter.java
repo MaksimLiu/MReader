@@ -60,7 +60,7 @@ public abstract class BaseRvAdapter<T> extends RecyclerView.Adapter {
 
             return new FooterViewHolder(view);
         } else {
-            return onCreateItemViewHolder(parent);
+            return onCreateItemViewHolder(parent,viewType);
         }
     }
 
@@ -136,7 +136,7 @@ public abstract class BaseRvAdapter<T> extends RecyclerView.Adapter {
         return isLoading;
     }
 
-    protected abstract RecyclerView.ViewHolder onCreateItemViewHolder(ViewGroup parent);
+    protected abstract RecyclerView.ViewHolder onCreateItemViewHolder(ViewGroup parentm,int viewType);
 
     protected abstract void onBindItemViewHolder(RecyclerView.ViewHolder holder, int position);
 

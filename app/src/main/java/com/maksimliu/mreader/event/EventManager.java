@@ -1,7 +1,5 @@
 package com.maksimliu.mreader.event;
 
-import java.util.Objects;
-
 /**
  * Created by MaksimLiu on 2017/3/8.
  * <h3>EventBus 事件统一管理类</h3>
@@ -42,6 +40,24 @@ public class EventManager {
 
         GET_DETAIL //查看信息的具体内容
         ;
+
+        private Object object;
+
+        @Override
+        public void setObject(Object object) {
+
+            this.object = object;
+        }
+
+        @Override
+        public Object getObject() {
+            return object;
+        }
+    }
+
+
+    public enum Gank implements BaseEvent {
+        GET_EVERY_DAY_GANK;
 
         private Object object;
 

@@ -1,7 +1,7 @@
 package com.maksimliu.mreader.api;
 
-import com.maksimliu.mreader.bean.ZhiHuDailyDetail;
-import com.maksimliu.mreader.bean.ZhiHuDailyNews;
+import com.maksimliu.mreader.bean.ZhiHuDailyDetailBean;
+import com.maksimliu.mreader.bean.ZhiHuDailyNewsBean;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -9,6 +9,7 @@ import retrofit2.http.Path;
 
 /**
  * Created by MaksimLiu on 2017/3/3.
+ * <h3>知乎日报API</h3>
  */
 
 public interface ZhiHuDailyApi {
@@ -23,7 +24,7 @@ public interface ZhiHuDailyApi {
      * @return
      */
     @GET("news/latest")
-    Call<ZhiHuDailyNews> getLatestNews();
+    Call<ZhiHuDailyNewsBean> getLatestNews();
 
     /**
      * 内容获取与离线下载
@@ -33,7 +34,7 @@ public interface ZhiHuDailyApi {
      * @param id 新闻id
      */
     @GET("news/{id}")
-    Call<ZhiHuDailyDetail> getNewsDetail(@Path("id") String id);
+    Call<ZhiHuDailyDetailBean> getNewsDetail(@Path("id") String id);
 
 
     /**
@@ -47,7 +48,7 @@ public interface ZhiHuDailyApi {
      * @return
      */
     @GET("news/before/{date}")
-    Call<ZhiHuDailyNews> getOldeNews(@Path("date") String date);
+    Call<ZhiHuDailyNewsBean> getOldeNews(@Path("date") String date);
 
 
     /**

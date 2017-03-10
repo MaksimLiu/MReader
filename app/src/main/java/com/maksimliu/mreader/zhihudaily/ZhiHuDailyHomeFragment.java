@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.base.BaseFragment;
-import com.maksimliu.mreader.bean.ZhiHuDailyNews;
+import com.maksimliu.mreader.bean.ZhiHuDailyNewsBean;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.utils.DateUtil;
 import com.maksimliu.mreader.utils.MLog;
@@ -141,12 +141,12 @@ public class ZhiHuDailyHomeFragment extends BaseFragment implements ZhiHuDailyCo
         if (event == EventManager.ZhiHuDailyNews.POST_NEWS_ID) {
 
             MLog.i("POST_NEWS_ID");
-            ZhiHuDailyNews.StoriesBean stories = (ZhiHuDailyNews.StoriesBean) event.getObject();
+            ZhiHuDailyNewsBean.StoriesBean stories = (ZhiHuDailyNewsBean.StoriesBean) event.getObject();
             presenter.getNewsDetail(stories.getId() + "");
             return;
         }
 
-        ZhiHuDailyNews news = (ZhiHuDailyNews) event.getObject();
+        ZhiHuDailyNewsBean news = (ZhiHuDailyNewsBean) event.getObject();
 
         NewsRvAdapter adapter = (NewsRvAdapter) rvZhihu.getAdapter();
 
@@ -236,6 +236,7 @@ public class ZhiHuDailyHomeFragment extends BaseFragment implements ZhiHuDailyCo
     @Override
     protected void initView() {
 
+
         //给RecyclerView item设置间距
         int space = getResources().getDimensionPixelOffset(R.dimen.card_spacing);
         rvZhihu.addItemDecoration(new SpaceItemDecoration(space));
@@ -244,7 +245,7 @@ public class ZhiHuDailyHomeFragment extends BaseFragment implements ZhiHuDailyCo
         rvZhihu.setHasFixedSize(true);
 
         rvZhihu.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvZhihu.setAdapter(new NewsRvAdapter(getActivity(), new ArrayList<com.maksimliu.mreader.bean.ZhiHuDailyNews.StoriesBean>()));
+        rvZhihu.setAdapter(new NewsRvAdapter(getActivity(), new ArrayList<ZhiHuDailyNewsBean.StoriesBean>()));
 
 
         //下拉刷新

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.maksimliu.mreader.R;
+import com.maksimliu.mreader.bean.ZhiHuDailyNewsBean;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.utils.MLog;
 import com.maksimliu.mreader.zhihudaily.ZhiHuDailyDetailActivity;
@@ -28,23 +29,24 @@ import butterknife.ButterKnife;
  * Created by MaksimLiu on 2017/3/4.
  */
 
-public class NewsRvAdapter extends BaseRvAdapter<com.maksimliu.mreader.bean.ZhiHuDailyNews.StoriesBean> {
+public class NewsRvAdapter extends BaseRvAdapter<ZhiHuDailyNewsBean.StoriesBean> {
 
 
-    private List<com.maksimliu.mreader.bean.ZhiHuDailyNews.StoriesBean> storiesBeanList;
+    private List<ZhiHuDailyNewsBean.StoriesBean> storiesBeanList;
 
     private Context context;
 
 
-    public NewsRvAdapter(Context context, List<com.maksimliu.mreader.bean.ZhiHuDailyNews.StoriesBean> items) {
+    public NewsRvAdapter(Context context, List<ZhiHuDailyNewsBean.StoriesBean> items) {
         super(context, items);
         this.storiesBeanList = items;
         this.context = context;
 
     }
 
+
     @Override
-    protected RecyclerView.ViewHolder onCreateItemViewHolder(ViewGroup parent) {
+    protected RecyclerView.ViewHolder onCreateItemViewHolder(ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_home_zhihudaily, parent, false);
 
@@ -79,7 +81,7 @@ public class NewsRvAdapter extends BaseRvAdapter<com.maksimliu.mreader.bean.ZhiH
      * @param latest
      */
     @Override
-    public void addItems(List<com.maksimliu.mreader.bean.ZhiHuDailyNews.StoriesBean> latest) {
+    public void addItems(List<ZhiHuDailyNewsBean.StoriesBean> latest) {
 
 
         storiesBeanList.addAll(latest);
@@ -88,7 +90,7 @@ public class NewsRvAdapter extends BaseRvAdapter<com.maksimliu.mreader.bean.ZhiH
     }
 
     @Override
-    public void resetItems(List<com.maksimliu.mreader.bean.ZhiHuDailyNews.StoriesBean> items) {
+    public void resetItems(List<ZhiHuDailyNewsBean.StoriesBean> items) {
 
         storiesBeanList.clear();
         storiesBeanList.addAll(items);

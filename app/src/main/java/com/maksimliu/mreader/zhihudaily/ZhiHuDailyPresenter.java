@@ -2,7 +2,8 @@ package com.maksimliu.mreader.zhihudaily;
 
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.api.ZhiHuDailyApi;
-import com.maksimliu.mreader.bean.ZhiHuDailyDetail;
+import com.maksimliu.mreader.bean.ZhiHuDailyDetailBean;
+import com.maksimliu.mreader.bean.ZhiHuDailyNewsBean;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.network.CacheInterceptor;
 
@@ -73,11 +74,11 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
 
         final EventManager.ZhiHuDailyNews event = EventManager.ZhiHuDailyNews.GET_LATEST;
 
-        Call<com.maksimliu.mreader.bean.ZhiHuDailyNews> latestCall = zhiHuDailyApi.getLatestNews();
+        Call<ZhiHuDailyNewsBean> latestCall = zhiHuDailyApi.getLatestNews();
 
-        latestCall.enqueue(new Callback<com.maksimliu.mreader.bean.ZhiHuDailyNews>() {
+        latestCall.enqueue(new Callback<ZhiHuDailyNewsBean>() {
             @Override
-            public void onResponse(Call<com.maksimliu.mreader.bean.ZhiHuDailyNews> call, Response<com.maksimliu.mreader.bean.ZhiHuDailyNews> response) {
+            public void onResponse(Call<ZhiHuDailyNewsBean> call, Response<ZhiHuDailyNewsBean> response) {
 
                 event.setObject(response.body());
                 EventBus.getDefault().post(event);
@@ -85,7 +86,7 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
             }
 
             @Override
-            public void onFailure(Call<com.maksimliu.mreader.bean.ZhiHuDailyNews> call, Throwable t) {
+            public void onFailure(Call<ZhiHuDailyNewsBean> call, Throwable t) {
 
 
                 view.showError("网络无法连接");
@@ -106,11 +107,11 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
             event = EventManager.ZhiHuDailyNews.SET_OLD_NEWS;
         }
 
-        Call<com.maksimliu.mreader.bean.ZhiHuDailyNews> latestCall = zhiHuDailyApi.getOldeNews(date);
+        Call<ZhiHuDailyNewsBean> latestCall = zhiHuDailyApi.getOldeNews(date);
 
-        latestCall.enqueue(new Callback<com.maksimliu.mreader.bean.ZhiHuDailyNews>() {
+        latestCall.enqueue(new Callback<ZhiHuDailyNewsBean>() {
             @Override
-            public void onResponse(Call<com.maksimliu.mreader.bean.ZhiHuDailyNews> call, Response<com.maksimliu.mreader.bean.ZhiHuDailyNews> response) {
+            public void onResponse(Call<ZhiHuDailyNewsBean> call, Response<ZhiHuDailyNewsBean> response) {
 
 
                 event.setObject(response.body());
@@ -119,7 +120,7 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
             }
 
             @Override
-            public void onFailure(Call<com.maksimliu.mreader.bean.ZhiHuDailyNews> call, Throwable t) {
+            public void onFailure(Call<ZhiHuDailyNewsBean> call, Throwable t) {
 
 
                 view.showError("网络无法连接");
@@ -133,11 +134,11 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
 
         final EventManager.ZhiHuDailyNewsDetail event = EventManager.ZhiHuDailyNewsDetail.GET_DETAIL;
 
-        Call<ZhiHuDailyDetail> latestCall = zhiHuDailyApi.getNewsDetail(id);
+        Call<ZhiHuDailyDetailBean> latestCall = zhiHuDailyApi.getNewsDetail(id);
 
-        latestCall.enqueue(new Callback<ZhiHuDailyDetail>() {
+        latestCall.enqueue(new Callback<ZhiHuDailyDetailBean>() {
             @Override
-            public void onResponse(Call<ZhiHuDailyDetail> call, Response<ZhiHuDailyDetail> response) {
+            public void onResponse(Call<ZhiHuDailyDetailBean> call, Response<ZhiHuDailyDetailBean> response) {
 
                 event.setObject(response.body());
                 EventBus.getDefault().post(event);
@@ -145,7 +146,7 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
             }
 
             @Override
-            public void onFailure(Call<ZhiHuDailyDetail> call, Throwable t) {
+            public void onFailure(Call<ZhiHuDailyDetailBean> call, Throwable t) {
 
 
                 view.showError("网络无法连接");
