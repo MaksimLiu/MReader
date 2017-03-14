@@ -10,7 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.maksimliu.mreader.base.BaseActivity;
 import com.maksimliu.mreader.base.EventActivity;
 import com.maksimliu.mreader.bean.ZhiHuDailyNewsBean;
 import com.maksimliu.mreader.gank.GankFragment;
@@ -29,6 +28,8 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
     private ZhiHuDailyHomeFragment zhiHuDailyHomeFragment;
 
     private GankFragment gankFragment;
+
+
 
     private Fragment currentFragment;
 
@@ -110,6 +111,9 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
 
             case R.id.nav_about:
                 startActivity(new Intent(MainActivity.this, AboutActivity.class));
+                break;
+
+            default:
                 break;
         }
 

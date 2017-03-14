@@ -36,7 +36,7 @@ public interface GankApi {
      * @param day 日
      * @return JSON
      */
-    @GET("day/{year}/{month}/{day}")
+    @GET("history/content/day/{year}/{month}/{day}")
     Call<GankBean> getEveryDayGank(@Path("year") String year,
                                    @Path("month") String month,
                                    @Path("day") String day);

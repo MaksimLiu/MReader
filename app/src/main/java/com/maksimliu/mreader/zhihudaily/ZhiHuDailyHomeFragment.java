@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.maksimliu.mreader.R;
-import com.maksimliu.mreader.base.BaseFragment;
+import com.maksimliu.mreader.base.EventFragment;
 import com.maksimliu.mreader.bean.ZhiHuDailyNewsBean;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.utils.DateUtil;
@@ -36,7 +36,7 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ZhiHuDailyHomeFragment extends BaseFragment implements ZhiHuDailyContract.View {
+public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyContract.View {
 
 
     @BindView(R.id.rv_zhihu)
@@ -203,7 +203,7 @@ public class ZhiHuDailyHomeFragment extends BaseFragment implements ZhiHuDailyCo
                 mDay=dayOfMonth;
                 mMonth=monthOfYear;
 
-                presenter.getOldNews(DateUtil.convertDateForApi(year, monthOfYear, dayOfMonth), 2);
+                presenter.getOldNews(DateUtil.convertDateForZhiHuApi(year, monthOfYear, dayOfMonth), 2);
 
             }
         }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
@@ -234,7 +234,7 @@ public class ZhiHuDailyHomeFragment extends BaseFragment implements ZhiHuDailyCo
     }
 
     @Override
-    protected void initView() {
+    protected void setupView() {
 
 
         //给RecyclerView item设置间距

@@ -39,9 +39,24 @@ public abstract class BaseRvAdapter<T> extends RecyclerView.Adapter {
      */
     private boolean isLoading;
 
+    /**
+     * 是否展示页尾加载Progressbar,默认开启
+     */
+    private boolean isShowFooter = true;
+
     private Context context;
 
-    private List<T> items;
+    protected List<T> items;
+
+    protected T tItems;
+
+
+    public BaseRvAdapter(Context context,List<T>... items1) {
+
+        this.context = context;
+    }
+
+
 
     public BaseRvAdapter(Context context, List<T> items) {
 
@@ -54,13 +69,14 @@ public abstract class BaseRvAdapter<T> extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
 
-        if (viewType == VIEW_TYPE_FOOTER) {
+        if (viewType == VIEW_TYPE_FOOTER && isShowFooter) {
 
             View view = LayoutInflater.from(context).inflate(R.layout.view_footer_recyclerview, parent, false);
 
             return new FooterViewHolder(view);
+
         } else {
-            return onCreateItemViewHolder(parent,viewType);
+            return onCreateItemViewHolder(parent, viewType);
         }
     }
 
@@ -73,7 +89,9 @@ public abstract class BaseRvAdapter<T> extends RecyclerView.Adapter {
 
             case VIEW_TYPE_FOOTER:
 
-                onBindFooterViewHolder(holder, position, isLoading);
+                if (isShowFooter) {
+                    onBindFooterViewHolder(holder, position, isLoading);
+                }
                 break;
 
             case VIEW_TYPE_ITEM:
@@ -89,12 +107,12 @@ public abstract class BaseRvAdapter<T> extends RecyclerView.Adapter {
         FooterViewHolder viewHolder = (FooterViewHolder) holder;
         if (isLoading) {
 
-            MLog.i("Progressbar isLoading   "+isLoading);
+            MLog.i("Progressbar isLoading   " + isLoading);
             viewHolder.pbFooter.setVisibility(View.GONE);
 
 
         } else {
-            MLog.i("Progressbar isLoading   "+isLoading);
+            MLog.i("Progressbar isLoading   " + isLoading);
             viewHolder.pbFooter.setVisibility(View.VISIBLE);
         }
     }
@@ -106,7 +124,7 @@ public abstract class BaseRvAdapter<T> extends RecyclerView.Adapter {
         if (items == null || items.size() == 0) {
             return 0;
         }
-        return items.size() + 1; //+1 留空间给Footer
+        return isShowFooter ? items.size() + 1 : items.size(); //+1 留空间给Footer
     }
 
     @Override
@@ -119,6 +137,10 @@ public abstract class BaseRvAdapter<T> extends RecyclerView.Adapter {
     public void setLoading(boolean flag) {
 
         isLoading = flag;
+    }
+
+    public void setShowFooter(boolean flag) {
+        this.isShowFooter = flag;
     }
 
 
@@ -136,11 +158,13 @@ public abstract class BaseRvAdapter<T> extends RecyclerView.Adapter {
         return isLoading;
     }
 
-    protected abstract RecyclerView.ViewHolder onCreateItemViewHolder(ViewGroup parentm,int viewType);
+    protected abstract RecyclerView.ViewHolder onCreateItemViewHolder(ViewGroup parentm, int viewType);
 
     protected abstract void onBindItemViewHolder(RecyclerView.ViewHolder holder, int position);
 
     public abstract void addItems(List<T> items);
 
     public abstract void resetItems(List<T> items);
+
+
 }

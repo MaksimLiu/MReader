@@ -2,16 +2,20 @@ package com.maksimliu.mreader.gank;
 
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.api.GankApi;
-import com.maksimliu.mreader.api.ZhiHuDailyApi;
 import com.maksimliu.mreader.bean.GankBean;
+import com.maksimliu.mreader.db.DbHelper;
+import com.maksimliu.mreader.db.model.GankDailyModel;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.network.CacheInterceptor;
+import com.maksimliu.mreader.utils.DateUtil;
+import com.maksimliu.mreader.utils.MLog;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+import io.realm.RealmObject;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -31,11 +35,15 @@ public class GankPresenter implements GankContract.Presenter {
 
     private GankApi gankApi;
 
+    private DbHelper<GankDailyModel> dbHelper;
+
 
     public GankPresenter(GankContract.View view) {
 
         this.view = view;
         view.setPresenter(this);
+
+        dbHelper = DbHelper.getInstance();
 
         File cacheFile = new File(MReaderApplication.getContext().getExternalCacheDir(), "gank");
 
@@ -68,23 +76,39 @@ public class GankPresenter implements GankContract.Presenter {
 
 
     @Override
-    public void getEveryDayGank(String year, String monthOfYear, String dayOfMonth) {
-        final EventManager.Gank gankEvent= EventManager.Gank.GET_EVERY_DAY_GANK;
+    public GankDailyModel loadLocalTodayData() {
 
-        Call<GankBean> gankCall =gankApi.getEveryDayGank(year,monthOfYear,dayOfMonth);
+
+        MLog.i(DateUtil.getToday());
+
+        return dbHelper.get(GankDailyModel.class, "publishedAt", DateUtil.getToday(),DbHelper.GET_FIRST_MODEL);
+
+
+    }
+
+    @Override
+    public GankDailyModel loadLocalRecentData() {
+
+        return dbHelper.get(GankDailyModel.class, "publishedAt", DateUtil.getToday(),DbHelper.GET_LAST_MODEL);
+    }
+
+    @Override
+    public void getEveryDayGank(String year, String monthOfYear, String dayOfMonth) {
+        final EventManager.Gank gankEvent = EventManager.Gank.GET_EVERY_DAY_GANK;
+
+        Call<GankBean> gankCall = gankApi.getEveryDayGank(year, monthOfYear, dayOfMonth);
 
         gankCall.enqueue(new Callback<GankBean>() {
             @Override
             public void onResponse(Call<GankBean> call, Response<GankBean> response) {
 
-                gankEvent.setObject(response.body().getResults());
+                gankEvent.setObject(response.body());
                 EventBus.getDefault().post(gankEvent);
 
             }
 
             @Override
             public void onFailure(Call<GankBean> call, Throwable t) {
-
 
 
                 view.showError("加载失败");
