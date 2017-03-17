@@ -1,6 +1,7 @@
 package com.maksimliu.mreader.api;
 
 import com.maksimliu.mreader.bean.GankBean;
+import com.maksimliu.mreader.bean.GankCategoryBean;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -49,7 +50,7 @@ public interface GankApi {
      * @return JSON
      */
 
-    @GET("data/{category}/10/{page}")
-    Call<GankBean> getCategoryGank(@Path("category")String category,@Path("page") String page);
+    @GET("data/{category}/20/{page}")
+    Call<GankCategoryBean> getCategoryGank(@Path("category")String category, @Path("page") String page);
 
 }

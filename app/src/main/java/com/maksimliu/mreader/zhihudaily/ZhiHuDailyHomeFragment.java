@@ -4,6 +4,7 @@ package com.maksimliu.mreader.zhihudaily;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -155,6 +156,7 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
 
             MLog.i("GET_LATEST");
 
+            
             adapter.resetItems(news.getStories());
             calendar = Calendar.getInstance();//时间重置回今天
 
@@ -237,6 +239,7 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
     protected void setupView() {
 
 
+        getActivity().findViewById(R.id.tab).setVisibility(View.GONE);
         //给RecyclerView item设置间距
         int space = getResources().getDimensionPixelOffset(R.dimen.card_spacing);
         rvZhihu.addItemDecoration(new SpaceItemDecoration(space));

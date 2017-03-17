@@ -1,5 +1,7 @@
 package com.maksimliu.mreader.event;
 
+import java.util.Objects;
+
 /**
  * Created by MaksimLiu on 2017/3/8.
  * <h3>EventBus 事件统一管理类</h3>
@@ -65,6 +67,50 @@ public class EventManager {
         public void setObject(Object object) {
 
             this.object = object;
+        }
+
+        @Override
+        public Object getObject() {
+            return object;
+        }
+    }
+
+    public enum GankCategory implements BaseEvent {
+        ANDROID,
+        IOS,
+        OTHERS,
+        FRONT_END,
+        FULI,
+        EXTRA_RESOURCE;
+
+        private Object object;
+
+        @Override
+        public void setObject(Object object) {
+
+            this.object = object;
+
+        }
+
+        @Override
+        public Object getObject() {
+            return object;
+        }
+    }
+
+    public enum GankAndroid implements BaseEvent {
+        GET_LATEST
+        ;
+
+
+        private Object object;
+
+        @Override
+        public void setObject(Object object) {
+
+            this.object = object;
+
+
         }
 
         @Override

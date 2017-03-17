@@ -4,15 +4,18 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.maksimliu.mreader.base.EventActivity;
 import com.maksimliu.mreader.bean.ZhiHuDailyNewsBean;
 import com.maksimliu.mreader.gank.GankFragment;
+import com.maksimliu.mreader.gank.GankHomeFragment;
 import com.maksimliu.mreader.utils.FragmentUtil;
 import com.maksimliu.mreader.zhihudaily.ZhiHuDailyHomeFragment;
 
@@ -85,12 +88,15 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-
+        TabLayout tabLayout=((TabLayout)findViewById(R.id.tab));
 
         switch (item.getItemId()) {
 
             case R.id.nav_zhihu:
+
+                tabLayout.setVisibility(View.GONE);
                 toolbar.setTitle(getString(R.string.zhihudaily));
+
                 if (currentFragment == zhiHuDailyHomeFragment) {
                     break;
                 }
@@ -100,7 +106,10 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
                 break;
 
             case R.id.nav_gank:
+
+                tabLayout.setVisibility(View.VISIBLE);
                 toolbar.setTitle(R.string.gank);
+
                 if (currentFragment == gankFragment) {
                     break;
                 }

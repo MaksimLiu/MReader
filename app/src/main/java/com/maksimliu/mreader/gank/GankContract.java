@@ -11,18 +11,29 @@ import io.realm.RealmObject;
  * Created by MaksimLiu on 2017/3/9.
  */
 
-public class GankContract {
+public interface GankContract {
+
+     String ANDROID_CATEGORY = "Android";
+     String IOS_CATEGORY = "iOS";
+     String OTHERS_CATEGORY = "瞎推荐";
+     String FRONT_END_CATEGORY = "前端";
+     String FULI_CATEGORY = "福利";
+    String EXTRA_RESOURCE="拓展资源";
 
     interface View extends BaseView<Presenter> {
 
 
     }
 
-    interface Presenter extends BasePresenter {
+    interface Presenter<T> extends BasePresenter {
 
         GankDailyModel loadLocalTodayData();
+
         GankDailyModel loadLocalRecentData();
-        void getEveryDayGank(String year,String monthOfYear,String dayOfMonth);
+
+        void getEveryDayGank(String year, String monthOfYear, String dayOfMonth);
+
+
 
     }
 }

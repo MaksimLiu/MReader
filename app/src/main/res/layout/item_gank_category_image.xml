@@ -1,0 +1,48 @@
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_gank_category_image"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardBackgroundColor="@color/cardview_light_background"
+    app:cardCornerRadius="@dimen/card_round_corner">
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_card">
+
+        <ImageView
+            android:id="@+id/iv_gank_category"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/spacing_normal"
+            android:scaleType="fitXY"
+            tools:src="@drawable/category_test" />
+
+        <TextView
+            android:id="@+id/tv_gank_category_title"
+            style="@style/TitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/iv_gank_category"
+            android:maxLines="2"
+            tools:text="编码中陌生单词不认识？是时候打造一款AndroidStudio单词备忘插件了" />
+
+        <TextView
+            android:id="@+id/tv_gank_category_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:paddingStart="@dimen/spacing_normal"
+            android:paddingBottom="@dimen/spacing_normal"
+            tools:text="@string/about"/>
+    </RelativeLayout>
+
+
+</android.support.v7.widget.CardView>

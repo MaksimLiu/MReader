@@ -72,7 +72,7 @@ public class DbHelper<T> {
         if (type==GET_FIRST_MODEL){
             return (T) realm.where(object).equalTo(sel, query).findFirst();
         }else {
-            return (T) realm.where(object).findAll().sort(sel, Sort.DESCENDING).first();
+            return (T) realm.where(object).equalTo(sel,"2017-03-15").findAllSorted(sel,Sort.DESCENDING).first();
         }
     }
 

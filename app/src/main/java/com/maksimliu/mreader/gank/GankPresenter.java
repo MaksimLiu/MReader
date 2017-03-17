@@ -3,6 +3,7 @@ package com.maksimliu.mreader.gank;
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.api.GankApi;
 import com.maksimliu.mreader.bean.GankBean;
+import com.maksimliu.mreader.bean.GankCategoryBean;
 import com.maksimliu.mreader.db.DbHelper;
 import com.maksimliu.mreader.db.model.GankDailyModel;
 import com.maksimliu.mreader.event.EventManager;
@@ -28,7 +29,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by MaksimLiu on 2017/3/9.
  */
 
-public class GankPresenter implements GankContract.Presenter {
+public class GankPresenter implements GankContract.Presenter{
 
 
     private GankContract.View view;
@@ -81,7 +82,7 @@ public class GankPresenter implements GankContract.Presenter {
 
         MLog.i(DateUtil.getToday());
 
-        return dbHelper.get(GankDailyModel.class, "publishedAt", DateUtil.getToday(),DbHelper.GET_FIRST_MODEL);
+        return dbHelper.get(GankDailyModel.class, "publishedAt", DateUtil.getToday(), DbHelper.GET_FIRST_MODEL);
 
 
     }
@@ -89,7 +90,7 @@ public class GankPresenter implements GankContract.Presenter {
     @Override
     public GankDailyModel loadLocalRecentData() {
 
-        return dbHelper.get(GankDailyModel.class, "publishedAt", DateUtil.getToday(),DbHelper.GET_LAST_MODEL);
+        return dbHelper.get(GankDailyModel.class, "publishedAt", DateUtil.getToday(), DbHelper.GET_LAST_MODEL);
     }
 
     @Override
@@ -115,4 +116,6 @@ public class GankPresenter implements GankContract.Presenter {
             }
         });
     }
+
 }
+
