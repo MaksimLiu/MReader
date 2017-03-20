@@ -39,6 +39,7 @@ public class GankFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_gank, container, false);
         ButterKnife.bind(this, view);
+        setupView();
         return view;
     }
 

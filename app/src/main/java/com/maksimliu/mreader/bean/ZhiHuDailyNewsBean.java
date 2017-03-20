@@ -1,12 +1,19 @@
 package com.maksimliu.mreader.bean;
 
+import com.google.gson.annotations.SerializedName;
+import com.maksimliu.mreader.db.model.ZhiHuCommonNewsModel;
+import com.maksimliu.mreader.db.model.ZhiHuTopNewsModel;
+
+import java.io.Serializable;
 import java.util.List;
+
+import io.realm.annotations.Ignore;
 
 /**
  * Created by MaksimLiu on 2017/3/4.
  */
 
-public class ZhiHuDailyNewsBean {
+public class ZhiHuDailyNewsBean implements Serializable{
 
 
     /**
@@ -15,9 +22,12 @@ public class ZhiHuDailyNewsBean {
      * top_stories : [{"image":"http://pic4.zhimg.com/58cd9cdfeb831a999fd569471a39cdcb.jpg","type":0,"id":9261274,"ga_prefix":"030411","title":"「我就是我，你不舒服是你的事，气死你活该」"},{"image":"http://pic2.zhimg.com/edde5b962b2dfbc696d141df5159c0ad.jpg","type":0,"id":9263190,"ga_prefix":"030407","title":"咦，运动品牌的代言人，怎么慢慢从运动员变成了明星？"},{"image":"http://pic4.zhimg.com/4fec3dbee2043a4d1b4e5c43021151df.jpg","type":0,"id":9260628,"ga_prefix":"030318","title":"还记得拿着文曲星玩《英雄坛说》的日子吗？"},{"image":"http://pic2.zhimg.com/085844dda675e1c248ef12bb92ab5cd5.jpg","type":0,"id":9262919,"ga_prefix":"030316","title":"为什么《比利 · 林恩的中场战事》没有获得奥斯卡提名？"},{"image":"http://pic3.zhimg.com/a4f456692c4fca8c703c459c1ea12bbe.jpg","type":0,"id":9262827,"ga_prefix":"030315","title":"Nintendo Switch 开售，不过先别急着买"}]
      */
 
+    @SerializedName("date")
     private String date;
-    private List<StoriesBean> stories;
-    private List<TopStoriesBean> top_stories;
+    @SerializedName("stories")
+    private List<ZhiHuCommonNewsModel> commonNewsModels;
+    @SerializedName("top_stories")
+    private List<ZhiHuTopNewsModel> topNewsModels;
 
     public String getDate() {
         return date;
@@ -27,141 +37,21 @@ public class ZhiHuDailyNewsBean {
         this.date = date;
     }
 
-    public List<StoriesBean> getStories() {
-        return stories;
+    public List<ZhiHuCommonNewsModel> getCommonNewsModels() {
+        return commonNewsModels;
     }
 
-    public void setStories(List<StoriesBean> stories) {
-        this.stories = stories;
+    public void setCommonNewsModels(List<ZhiHuCommonNewsModel> stories) {
+        this.commonNewsModels = stories;
     }
 
-    public List<TopStoriesBean> getTop_stories() {
-        return top_stories;
+    public List<ZhiHuTopNewsModel> getTopNewsModels() {
+        return topNewsModels;
     }
 
-    public void setTop_stories(List<TopStoriesBean> top_stories) {
-        this.top_stories = top_stories;
+    public void setTopNewsModels(List<ZhiHuTopNewsModel> top_stories) {
+        this.topNewsModels = top_stories;
     }
 
-    public static class StoriesBean {
-        /**
-         * images : ["http://pic1.zhimg.com/9e2e2f963d8a959be5e3c06e2e9b8188.jpg"]
-         * type : 0
-         * id : 9263837
-         * ga_prefix : 030415
-         * title : 除了冬天的铁栏杆，不能舔的还有这盘世上最苦游戏卡带
-         * multipic : true
-         */
 
-        private int type;
-        private int id;
-        private String ga_prefix;
-        private String title;
-        private boolean multipic;
-        private List<String> images;
-
-        public int getType() {
-            return type;
-        }
-
-        public void setType(int type) {
-            this.type = type;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getGa_prefix() {
-            return ga_prefix;
-        }
-
-        public void setGa_prefix(String ga_prefix) {
-            this.ga_prefix = ga_prefix;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public boolean isMultipic() {
-            return multipic;
-        }
-
-        public void setMultipic(boolean multipic) {
-            this.multipic = multipic;
-        }
-
-        public List<String> getImages() {
-            return images;
-        }
-
-        public void setImages(List<String> images) {
-            this.images = images;
-        }
-    }
-
-    public static class TopStoriesBean {
-        /**
-         * image : http://pic4.zhimg.com/58cd9cdfeb831a999fd569471a39cdcb.jpg
-         * type : 0
-         * id : 9261274
-         * ga_prefix : 030411
-         * title : 「我就是我，你不舒服是你的事，气死你活该」
-         */
-
-        private String image;
-        private int type;
-        private int id;
-        private String ga_prefix;
-        private String title;
-
-        public String getImage() {
-            return image;
-        }
-
-        public void setImage(String image) {
-            this.image = image;
-        }
-
-        public int getType() {
-            return type;
-        }
-
-        public void setType(int type) {
-            this.type = type;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getGa_prefix() {
-            return ga_prefix;
-        }
-
-        public void setGa_prefix(String ga_prefix) {
-            this.ga_prefix = ga_prefix;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-    }
 }

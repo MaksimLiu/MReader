@@ -14,9 +14,10 @@ import android.webkit.WebView;
 
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.base.EventFragment;
-import com.maksimliu.mreader.bean.GankBean;
+import com.maksimliu.mreader.base.LazyFragment;
+import com.maksimliu.mreader.bean.GankHomeBean;
 import com.maksimliu.mreader.db.DbHelper;
-import com.maksimliu.mreader.db.model.GankDailyModel;
+import com.maksimliu.mreader.db.model.GankHomeModel;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.utils.DateUtil;
 import com.maksimliu.mreader.utils.MLog;
@@ -32,14 +33,15 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class GankHomeFragment extends EventFragment implements GankContract.View {
+public class GankHomeFragment extends LazyFragment implements GankHomeContract.View {
 
 
     @BindView(R.id.wv_gank)
     WebView wvGank;
     @BindView(R.id.srl_gank)
     SwipeRefreshLayout srlGank;
-    private GankContract.Presenter presenter;
+
+    private GankHomeContract.Presenter presenter;
 
     private Bundle bundle;
 
@@ -66,29 +68,12 @@ public class GankHomeFragment extends EventFragment implements GankContract.View
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_gank_home, container, false);
         ButterKnife.bind(this, view);
+        setupView();
+        isPrepared=true;
+        lazyLoadData();
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (bundle == null) {
-
-
-            GankDailyModel dailyModel = presenter.loadLocalTodayData();
-
-            if (dailyModel == null) {
-                MLog.i("is null");
-                presenter.getEveryDayGank(year, month, day);
-                return;
-
-            }
-
-            showHtml(dailyModel);
-
-        }
-    }
 
 
     @Override
@@ -98,7 +83,7 @@ public class GankHomeFragment extends EventFragment implements GankContract.View
     }
 
     @Override
-    public void setPresenter(GankContract.Presenter presnter) {
+    public void setPresenter(GankHomeContract.Presenter presnter) {
 
 
         this.presenter = presnter;
@@ -121,7 +106,7 @@ public class GankHomeFragment extends EventFragment implements GankContract.View
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGankEvent(EventManager.Gank gankEvent) {
+    public void onGankEvent(EventManager.GankHome gankEvent) {
 
 
         boolean isSave = true;
@@ -131,18 +116,28 @@ public class GankHomeFragment extends EventFragment implements GankContract.View
         }
 
 
-        GankBean gankBean = (GankBean) gankEvent.getObject();
+        GankHomeBean gankBean = (GankHomeBean) gankEvent.getObject();
 
-        GankDailyModel gankDailyModel;
+        GankHomeModel gankDailyModel;
 
         MLog.i(gankBean.getResults().size() + "\tgankBean");
 
         //如果返回的result为空，说明今天API没有数据更新，则加载本地最新的数据
-        if (gankBean.getResults().size() == 0 || gankBean.getResults() == null) {
+        if (gankBean.getResults().isEmpty() || gankBean.getResults() == null) {
 
             MLog.i("今天API没有数据更新");
-            isSave = false;
-            gankDailyModel =  presenter.loadLocalRecentData();
+
+            gankDailyModel =  presenter.loadLocalLatest();
+
+            isSave = false;//已加载本地数据 置为false
+
+            //如果今天的API没有更新，本地又没有数据，则请求昨天的数据
+            if (gankDailyModel==null){
+
+                day=Integer.valueOf(day)-1+"";
+                presenter.getEveryDayGank(year,month,day);
+                return;
+            }
 
         } else {
 
@@ -153,7 +148,7 @@ public class GankHomeFragment extends EventFragment implements GankContract.View
         //如果加载的是本地数据，则不需要重复保存
         if (isSave) {
             String publicDate = gankDailyModel.getPublishedAt();
-            //截取时间 保留到必要的时间信息 2017-03-10
+            //截取时间 只保留到必要的时间信息 2017-03-10
             gankDailyModel.setPublishedAt(publicDate.substring(0, 10));
             dbHelper.save(gankDailyModel);
         }
@@ -164,17 +159,22 @@ public class GankHomeFragment extends EventFragment implements GankContract.View
 
     }
 
-    private void showHtml(GankDailyModel gankDailyModel) {
+    private void showHtml(GankHomeModel gankDailyModel) {
 
 
         //补充完整HTML代码
         StringBuilder html = new StringBuilder();
 
+        //去除<img />标签
+        String body=gankDailyModel.getContent().replaceAll("<img(.*)/>","");
+
         html.append("<!DOCTYPE HTML>\n")
                 .append("<html>\n<head>\n <meta charset=\"utf-8\" />\n")
                 .append("\n</head>\n<body")
-                .append(gankDailyModel.getContent())
+                .append(body)
                 .append("</body>\n<html>");
+
+
         wvGank.loadDataWithBaseURL("", html.toString(), "text/html;UTF-8", null, null);
     }
 
@@ -183,7 +183,7 @@ public class GankHomeFragment extends EventFragment implements GankContract.View
     protected void setupView() {
 
 
-        new GankPresenter(this);
+        new GankHomePresenter(this);
 
 
         wvGank.setWebChromeClient(new WebChromeClient());
@@ -197,7 +197,7 @@ public class GankHomeFragment extends EventFragment implements GankContract.View
             @Override
             public void onRefresh() {
 
-                GankDailyModel dailyModel = presenter.loadLocalTodayData();
+                GankHomeModel dailyModel = presenter.loadLocalData();
 
                 if (dailyModel == null) {
 
@@ -216,4 +216,22 @@ public class GankHomeFragment extends EventFragment implements GankContract.View
 
     }
 
+    @Override
+    protected void lazyLoadData() {
+
+        if(!isPrepared || !isVisible) {
+            return;
+        }
+
+        GankHomeModel dailyModel = presenter.loadLocalData();
+
+        if (dailyModel == null) {
+            MLog.i("is null");
+            presenter.getEveryDayGank(year, month, day);
+            return;
+
+        }
+
+        showHtml(dailyModel);
+    }
 }

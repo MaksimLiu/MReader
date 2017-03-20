@@ -2,16 +2,13 @@ package com.maksimliu.mreader.gank;
 
 import com.maksimliu.mreader.base.BasePresenter;
 import com.maksimliu.mreader.base.BaseView;
-import com.maksimliu.mreader.bean.GankBean;
-import com.maksimliu.mreader.db.model.GankDailyModel;
-
-import io.realm.RealmObject;
+import com.maksimliu.mreader.db.model.GankHomeModel;
 
 /**
  * Created by MaksimLiu on 2017/3/9.
  */
 
-public interface GankContract {
+public interface GankHomeContract {
 
      String ANDROID_CATEGORY = "Android";
      String IOS_CATEGORY = "iOS";
@@ -25,11 +22,11 @@ public interface GankContract {
 
     }
 
-    interface Presenter<T> extends BasePresenter {
+    interface Presenter extends BasePresenter {
 
-        GankDailyModel loadLocalTodayData();
+        GankHomeModel loadLocalData();
 
-        GankDailyModel loadLocalRecentData();
+        GankHomeModel loadLocalLatest();
 
         void getEveryDayGank(String year, String monthOfYear, String dayOfMonth);
 

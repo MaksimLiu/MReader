@@ -1,15 +1,20 @@
 package com.maksimliu.mreader.zhihudaily;
 
+import com.google.gson.Gson;
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.api.ZhiHuDailyApi;
 import com.maksimliu.mreader.bean.ZhiHuDailyDetailBean;
 import com.maksimliu.mreader.bean.ZhiHuDailyNewsBean;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.network.CacheInterceptor;
+import com.maksimliu.mreader.utils.ACache;
+import com.maksimliu.mreader.utils.DateUtil;
+import com.maksimliu.mreader.utils.MLog;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
@@ -28,8 +33,11 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
 
     private ZhiHuDailyContract.View view;
 
-
     private ZhiHuDailyApi zhiHuDailyApi;
+
+    private ACache aCache;
+
+    private Gson gson;
 
     public ZhiHuDailyPresenter(ZhiHuDailyContract.View view) {
 
@@ -52,6 +60,10 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
                 .baseUrl(ZhiHuDailyApi.BASE_API_4_URL)
                 .build();
 
+        aCache = ACache.get(MReaderApplication.getContext());
+
+        gson = new Gson();
+
         zhiHuDailyApi = retrofit.create(ZhiHuDailyApi.class);
 
 
@@ -69,7 +81,7 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
     }
 
     @Override
-    public void getLatestNews() {
+    public void fetchLatestNews() {
 
 
         final EventManager.ZhiHuDailyNews event = EventManager.ZhiHuDailyNews.GET_LATEST;
@@ -89,7 +101,7 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
             public void onFailure(Call<ZhiHuDailyNewsBean> call, Throwable t) {
 
 
-                view.showError("网络无法连接");
+                view.showError("加载失败");
 
             }
         });
@@ -97,11 +109,35 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
     }
 
     @Override
-    public void getOldNews(String date, int type) {
+    public void loadLatestNews() {
+
+        EventManager.ZhiHuDailyNews event;
+        MLog.i("loadLatestNews");
+
+        String dailyNews = aCache.getAsString("zhihu_daily_news" + DateUtil.getToday());
+        if (dailyNews != null) {
+            MLog.i(dailyNews);
+            event = EventManager.ZhiHuDailyNews.GET_LATEST;
+            ZhiHuDailyNewsBean bean = gson.fromJson(dailyNews, ZhiHuDailyNewsBean.class);
+            event.setObject(bean);
+            EventBus.getDefault().post(event);
+
+        } else {
+            MLog.i("Error");
+            event = EventManager.ZhiHuDailyNews.ERROR;
+            event.setObject(ZhiHuDailyContract.NO_LATEST_NEWS_CACHE);
+            EventBus.getDefault().post(event);
+        }
+
+
+    }
+
+    @Override
+    public void fetchOldNews(String date, int type) {
 
         final EventManager.ZhiHuDailyNews event;
 
-        if (type == 1) {
+        if (type == ZhiHuDailyContract.ADD_OLD_NEWS) {
             event = EventManager.ZhiHuDailyNews.ADD_OLD_NEWS;
         } else {
             event = EventManager.ZhiHuDailyNews.SET_OLD_NEWS;
@@ -123,36 +159,37 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
             public void onFailure(Call<ZhiHuDailyNewsBean> call, Throwable t) {
 
 
-                view.showError("网络无法连接");
+                view.showError("加载失败");
 
             }
         });
     }
 
     @Override
-    public void getNewsDetail(String id) {
+    public void loadOldNews(Calendar calendar) {
 
-        final EventManager.ZhiHuDailyNewsDetail event = EventManager.ZhiHuDailyNewsDetail.GET_DETAIL;
+        EventManager.ZhiHuDailyNews event;
+        MLog.i("loadOldNews");
 
-        Call<ZhiHuDailyDetailBean> latestCall = zhiHuDailyApi.getNewsDetail(id);
+        String oldNews = aCache.getAsString("zhihu_daily_news" + DateUtil.getCurrentDate(calendar));
+        if (oldNews != null) {
+            MLog.i(DateUtil.getCurrentDate(calendar));
+            MLog.i(oldNews);
+            event = EventManager.ZhiHuDailyNews.ADD_OLD_NEWS;
+            ZhiHuDailyNewsBean bean = gson.fromJson(oldNews, ZhiHuDailyNewsBean.class);
+            event.setObject(bean);
+            EventBus.getDefault().post(event);
 
-        latestCall.enqueue(new Callback<ZhiHuDailyDetailBean>() {
-            @Override
-            public void onResponse(Call<ZhiHuDailyDetailBean> call, Response<ZhiHuDailyDetailBean> response) {
-
-                event.setObject(response.body());
-                EventBus.getDefault().post(event);
-
-            }
-
-            @Override
-            public void onFailure(Call<ZhiHuDailyDetailBean> call, Throwable t) {
+        } else {
+            MLog.i("Error");
+            event = EventManager.ZhiHuDailyNews.ERROR;
+            event.setObject(ZhiHuDailyContract.NO_OLD_NEWS_CACHE);
+            EventBus.getDefault().post(event);
+        }
 
 
-                view.showError("网络无法连接");
-
-            }
-        });
     }
+
+
 }
 

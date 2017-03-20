@@ -5,7 +5,6 @@ import com.maksimliu.mreader.api.GankApi;
 import com.maksimliu.mreader.bean.GankCategoryBean;
 import com.maksimliu.mreader.db.DbHelper;
 import com.maksimliu.mreader.db.model.GankCategoryModel;
-import com.maksimliu.mreader.db.model.GankDailyModel;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.network.CacheInterceptor;
 
@@ -77,37 +76,40 @@ public class GankCategoryPresenter implements GankCategoryContract.Presenter {
 
     }
 
+
     @Override
-    public GankCategoryModel getLocalTodayData(String category) {
+    public GankCategoryModel loadLocalData(String category) {
         return null;
     }
 
     @Override
-    public GankCategoryModel getLocalRecentData(String category) {
+    public GankCategoryModel loadLocalLatest(String category) {
         return null;
     }
 
     @Override
     public void getGankCategoryDaily(String category,String page) {
-        Call<GankCategoryBean> call = gankApi.getCategoryGank(category, page);
+
 
         final EventManager.GankCategory gankCategory;
 
+        Call<GankCategoryBean> call = gankApi.getCategoryGank(category, page);
+
         switch (category) {
 
-            case GankContract.ANDROID_CATEGORY:
+            case GankApi.ANDROID_CATEGORY_TYPE:
                 gankCategory = EventManager.GankCategory.ANDROID;
                 break;
-            case GankContract.IOS_CATEGORY:
+            case GankApi.IOS_CATEGORY_TYPE:
                 gankCategory = EventManager.GankCategory.IOS;
                 break;
-            case GankContract.FRONT_END_CATEGORY:
+            case GankApi.FRONT_END_CATEGORY_TYPE:
                 gankCategory = EventManager.GankCategory.FRONT_END;
                 break;
-            case GankContract.OTHERS_CATEGORY:
+            case GankApi.OTHERS_CATEGORY_TYPE:
                 gankCategory = EventManager.GankCategory.OTHERS;
                 break;
-            case GankContract.FULI_CATEGORY:
+            case GankApi.FULI_CATEGORY_TYPE:
                 gankCategory = EventManager.GankCategory.FULI;
                 break;
             default:
@@ -128,6 +130,7 @@ public class GankCategoryPresenter implements GankCategoryContract.Presenter {
             @Override
             public void onFailure(Call<GankCategoryBean> call, Throwable t) {
 
+                view.showError("加载失败");
             }
         });
     }

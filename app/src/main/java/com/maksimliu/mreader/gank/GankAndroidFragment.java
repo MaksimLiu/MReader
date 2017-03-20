@@ -10,11 +10,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.base.EventFragment;
+import com.maksimliu.mreader.base.LazyFragment;
 import com.maksimliu.mreader.bean.GankCategoryBean;
 import com.maksimliu.mreader.db.model.GankCategoryModel;
 import com.maksimliu.mreader.event.EventManager;
@@ -33,7 +32,7 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class GankAndroidFragment extends EventFragment implements GankCategoryContract.View {
+public class GankAndroidFragment extends LazyFragment implements GankCategoryContract.View {
 
 
     @BindView(R.id.recyclerView)
@@ -69,21 +68,11 @@ public class GankAndroidFragment extends EventFragment implements GankCategoryCo
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.universal_list_card, container, false);
         ButterKnife.bind(this, view);
+        setupView();
+        isPrepared = true;
         return view;
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (bundle == null) {
-
-
-            presenter.getGankCategoryDaily(GankContract.ANDROID_CATEGORY, 1 + "");
-
-        }
-
-    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -105,7 +94,7 @@ public class GankAndroidFragment extends EventFragment implements GankCategoryCo
 //        ((GankAdapter)recyclerView.getAdapter()).setShowFooter(false);
 //        ((GankAdapter)recyclerView.getAdapter()).addItems(bean.getResults());
 
-        ((GankRvAdapter)recyclerView.getAdapter()).addData(bean.getResults());
+        ((GankRvAdapter) recyclerView.getAdapter()).addData(bean.getResults());
 //        adapter.loadMoreComplete();
     }
 
@@ -147,7 +136,6 @@ public class GankAndroidFragment extends EventFragment implements GankCategoryCo
         });
 
 
-
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 //        recyclerView.setAdapter(new GankAdapter(getActivity(), new ArrayList<GankCategoryModel>()));
@@ -158,7 +146,7 @@ public class GankAndroidFragment extends EventFragment implements GankCategoryCo
 
 
         page++;
-        presenter.getGankCategoryDaily(GankContract.ANDROID_CATEGORY, page + "");
+        presenter.getGankCategoryDaily(GankHomeContract.ANDROID_CATEGORY, page + "");
 
         adapter.setLoading(false);
     }
@@ -176,9 +164,21 @@ public class GankAndroidFragment extends EventFragment implements GankCategoryCo
         Snackbar.make(recyclerView, errorMsg, Snackbar.LENGTH_LONG).setAction("重试", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.getGankCategoryDaily(GankContract.ANDROID_CATEGORY, page + "");
+                presenter.getGankCategoryDaily(GankHomeContract.ANDROID_CATEGORY, page + "");
             }
         });
+
+    }
+
+    @Override
+    protected void lazyLoadData() {
+
+        if (!isPrepared || !isVisible) {
+            return;
+        }
+        MLog.i("lazyLoadData\t"+this.getClass().getSimpleName());
+        presenter.getGankCategoryDaily(GankHomeContract.ANDROID_CATEGORY, 1 + "");
+
 
     }
 }

@@ -20,7 +20,7 @@ import java.util.List;
  * Created by MaksimLiu on 2017/3/16.
  */
 
-public class GankRvAdapter extends BaseMultiItemQuickAdapter<GankCategoryModel, BaseViewHolder> {
+public class GankRvAdapter extends BaseMultiItemQuickAdapter<GankCategoryModel, BaseViewHolder> implements RvAdapter {
 
 
     private Context context;
@@ -28,7 +28,7 @@ public class GankRvAdapter extends BaseMultiItemQuickAdapter<GankCategoryModel, 
     private static final int TEXT_VIEW_TYPE = 1;
     private static final int IMAGE_TEXT_VIEW_TYPE = 2;
     private static final int IMAGE_VIEW_TYPE = 3;
-    private static final int FOOTER_VIEW_TYPE = 4;
+    private static final int FOOT_LOADER_VIEW_TYPE = 4;
 
     private boolean isLoader;
 
@@ -48,9 +48,9 @@ public class GankRvAdapter extends BaseMultiItemQuickAdapter<GankCategoryModel, 
         this.context = fragment.getActivity();
         this.models = data;
         addItemType(TEXT_VIEW_TYPE, R.layout.item_gank_category_text);
-        addItemType(IMAGE_TEXT_VIEW_TYPE, R.layout.item_gank_category_image);
+        addItemType(IMAGE_TEXT_VIEW_TYPE, R.layout.item_gank_category_image_text);
         addItemType(IMAGE_VIEW_TYPE,R.layout.item_image_card);
-        addItemType(FOOTER_VIEW_TYPE, R.layout.view_footer_recyclerview);
+        addItemType(FOOT_LOADER_VIEW_TYPE, R.layout.view_footer_recyclerview);
 
 
     }
@@ -87,7 +87,7 @@ public class GankRvAdapter extends BaseMultiItemQuickAdapter<GankCategoryModel, 
                 });
                 Glide.with(context).load(item.getImages().get(0)).into((ImageView) helper.getView(R.id.iv_gank_category));
                 break;
-            case FOOTER_VIEW_TYPE:
+            case FOOT_LOADER_VIEW_TYPE:
                 if (isLoader) {
                     helper.setVisible(R.id.pb_footer, false);
                 } else {
@@ -103,24 +103,17 @@ public class GankRvAdapter extends BaseMultiItemQuickAdapter<GankCategoryModel, 
     }
 
 
-    public void setLoading(boolean flag) {
-
-        this.isLoader = flag;
-
-    }
-
     @Override
     public int getItemViewType(int position) {
 
         super.getItemViewType(position);
-
 
         if (fragment instanceof GankFuLiFragment) {
             return IMAGE_VIEW_TYPE;
         } else {
 
             if (position + 1 == getItemCount()) {
-                return FOOTER_VIEW_TYPE;
+                return FOOT_LOADER_VIEW_TYPE;
             }
 
             if (models.get(position).getImages() == null ||
@@ -135,6 +128,10 @@ public class GankRvAdapter extends BaseMultiItemQuickAdapter<GankCategoryModel, 
     }
 
 
+    @Override
+    public void setLoading(boolean flag) {
+        this.isLoader = flag;
+    }
 }
 
 

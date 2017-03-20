@@ -17,9 +17,9 @@ public interface GankCategoryContract  {
 
     interface Presenter extends BasePresenter{
 
-        GankCategoryModel getLocalTodayData(String category);
+        GankCategoryModel loadLocalData(String category);
 
-        GankCategoryModel getLocalRecentData(String category);
+        GankCategoryModel loadLocalLatest(String category);
 
         void getGankCategoryDaily(String category,String page);
 

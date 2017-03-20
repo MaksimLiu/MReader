@@ -11,7 +11,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="96dp">
+        android:layout_height="104dp">
 
         <TextView
             android:id="@+id/tv_gank_category_title"

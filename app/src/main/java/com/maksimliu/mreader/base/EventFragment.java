@@ -1,6 +1,8 @@
 package com.maksimliu.mreader.base;
 
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import org.greenrobot.eventbus.EventBus;
@@ -16,6 +18,7 @@ public abstract class EventFragment extends BaseFragment {
     public EventFragment() {
         // Required empty public constructor
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -29,10 +32,6 @@ public abstract class EventFragment extends BaseFragment {
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onBaseEvent(){
-
-    }
 
 
 }

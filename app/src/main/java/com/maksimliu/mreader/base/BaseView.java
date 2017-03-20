@@ -12,4 +12,5 @@ public interface BaseView<T> {
 
     void showError(String errorMsg);
 
+
 }

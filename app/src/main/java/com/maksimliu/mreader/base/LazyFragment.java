@@ -4,7 +4,7 @@ package com.maksimliu.mreader.base;
  * Created by MaksimLiu on 2017/3/9.
  */
 
-public abstract class LazyFragment extends BaseFragment {
+public abstract class LazyFragment extends EventFragment {
 
     /**
      * 标志Fragment是否可见

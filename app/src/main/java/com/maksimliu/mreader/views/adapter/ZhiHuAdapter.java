@@ -1,5 +1,6 @@
 package com.maksimliu.mreader.views.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
@@ -13,10 +14,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.maksimliu.mreader.R;
-import com.maksimliu.mreader.bean.ZhiHuDailyNewsBean;
+import com.maksimliu.mreader.db.model.ZhiHuCommonNewsModel;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.utils.MLog;
-import com.maksimliu.mreader.zhihudaily.ZhiHuDailyDetailActivity;
+import com.maksimliu.mreader.zhihudaily.ZhiHuDetailActivity;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -29,17 +30,17 @@ import butterknife.ButterKnife;
  * Created by MaksimLiu on 2017/3/4.
  */
 
-public class NewsRvAdapter extends BaseRvAdapter<ZhiHuDailyNewsBean.StoriesBean> {
+public class ZhiHuAdapter extends BaseRvAdapter<ZhiHuCommonNewsModel> {
 
 
-    private List<ZhiHuDailyNewsBean.StoriesBean> storiesBeanList;
+    private List<ZhiHuCommonNewsModel> commonNewsModels;
 
     private Context context;
 
 
-    public NewsRvAdapter(Context context, List<ZhiHuDailyNewsBean.StoriesBean> items) {
+    public ZhiHuAdapter(Context context, List<ZhiHuCommonNewsModel> items) {
         super(context, items);
-        this.storiesBeanList = items;
+        this.commonNewsModels = items;
         this.context = context;
 
     }
@@ -48,7 +49,7 @@ public class NewsRvAdapter extends BaseRvAdapter<ZhiHuDailyNewsBean.StoriesBean>
     @Override
     protected RecyclerView.ViewHolder onCreateItemViewHolder(ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_home_zhihudaily, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_image_text, parent, false);
 
         return new NewsViewHolder(view);
     }
@@ -58,45 +59,37 @@ public class NewsRvAdapter extends BaseRvAdapter<ZhiHuDailyNewsBean.StoriesBean>
 
         NewsViewHolder newsViewHolder = (NewsViewHolder) holder;
 
-        newsViewHolder.tvHomeTitle.setText(storiesBeanList.get(position).getTitle());
+        newsViewHolder.tvHomeTitle.setText(commonNewsModels.get(position).getTitle());
         newsViewHolder.cardZhihuHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 //绑定获取具体内容的事件
-                EventManager.ZhiHuDailyNews event = EventManager.ZhiHuDailyNews.POST_NEWS_ID;
-                event.setObject(storiesBeanList.get(position));
 
+                Intent intent=new Intent(context,ZhiHuDetailActivity.class);
+                intent.putExtra("newsId",commonNewsModels.get(position).getId()+"");
+                context.startActivity(intent);
 
-                EventBus.getDefault().post(event);
-                MLog.i(storiesBeanList.get(position).getTitle());
-                context.startActivity(new Intent(context, ZhiHuDailyDetailActivity.class));
             }
         });
-        Glide.with(context).load(storiesBeanList.get(position).getImages().get(0)).into(newsViewHolder.ivHome);
+        Glide.with(context).load(commonNewsModels.get(position).getImages().get(0)).into(newsViewHolder.ivHome);
     }
 
-
-    /**
-     * @param latest
-     */
     @Override
-    public void addItems(List<ZhiHuDailyNewsBean.StoriesBean> latest) {
-
-
-        storiesBeanList.addAll(latest);
+    public void addItems(List<ZhiHuCommonNewsModel> items) {
+        commonNewsModels.addAll(items);
 
         notifyDataSetChanged();
     }
 
     @Override
-    public void resetItems(List<ZhiHuDailyNewsBean.StoriesBean> items) {
-
-        storiesBeanList.clear();
-        storiesBeanList.addAll(items);
+    public void resetItems(List<ZhiHuCommonNewsModel> items) {
+        commonNewsModels.clear();
+        commonNewsModels.addAll(items);
 
         notifyDataSetChanged();
     }
+
 
 
     static class NewsViewHolder extends RecyclerView.ViewHolder {

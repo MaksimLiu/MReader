@@ -63,6 +63,11 @@ public class DateUtil {
 
     }
 
+    public static String getCurrentDate(Calendar calendar) {
+
+        return DateFormat.format("yyyy-MM-dd", calendar).toString();
+    }
+
 
     public static String convertDate(int date) {
 

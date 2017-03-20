@@ -1,6 +1,6 @@
 package com.maksimliu.mreader.bean;
 
-import com.maksimliu.mreader.db.model.GankDailyModel;
+import com.maksimliu.mreader.db.model.GankHomeModel;
 
 import java.io.Serializable;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
  * Created by MaksimLiu on 2017/3/9.
  */
 
-public class GankBean implements Serializable{
+public class GankHomeBean implements Serializable{
 
     /**
      * error : false
@@ -17,7 +17,7 @@ public class GankBean implements Serializable{
      */
 
     private boolean error;
-    private List<GankDailyModel> results;
+    private List<GankHomeModel> results;
 
     public boolean isError() {
         return error;
@@ -27,11 +27,11 @@ public class GankBean implements Serializable{
         this.error = error;
     }
 
-    public List<GankDailyModel> getResults() {
+    public List<GankHomeModel> getResults() {
         return results;
     }
 
-    public void setResults(List<GankDailyModel> results) {
+    public void setResults(List<GankHomeModel> results) {
         this.results = results;
     }
 

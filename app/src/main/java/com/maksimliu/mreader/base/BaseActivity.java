@@ -26,11 +26,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected abstract void initView();
 
-    @Override
-    protected void onStop() {
-        super.onStop();
 
-    }
 
     protected abstract void afterCreate(Bundle savedInstanceState);
 

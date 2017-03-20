@@ -1,10 +1,7 @@
 package com.maksimliu.mreader.db;
 
-import com.maksimliu.mreader.bean.GankBean;
-
 import io.realm.Realm;
 import io.realm.RealmObject;
-import io.realm.Sort;
 
 /**
  * Created by MaksimLiu on 2017/3/4.
@@ -18,7 +15,7 @@ public class DbHelper<T> {
 
     public static final int GET_LAST_MODEL = 2;
 
-    private static Realm realm;
+    private Realm realm;
 
 
     public DbHelper() {
@@ -66,14 +63,33 @@ public class DbHelper<T> {
 
     }
 
-    public T get(Class<? extends RealmObject> object, String sel, String query,int type) {
+    /**
+     * 获取符合查询条件的本地数据
+     * @param object Model
+     * @param column 查询字段
+     * @param query 查询条件
+     * @return Model
+     */
+    public T getLocalData(Class<? extends RealmObject> object, String column, String query) {
 
 
-        if (type==GET_FIRST_MODEL){
-            return (T) realm.where(object).equalTo(sel, query).findFirst();
-        }else {
-            return (T) realm.where(object).equalTo(sel,"2017-03-15").findAllSorted(sel,Sort.DESCENDING).first();
-        }
+        return (T) realm.where(object)
+                .equalTo(column, query)
+                .findFirst();
+
+    }
+
+    /**
+     * 查询本地最新的数据
+     * @param object Model
+     * @return Model
+     */
+    public T getLocalLatest(final Class<? extends RealmObject> object) {
+
+
+        return (T) realm.where(object)
+                .findAll()
+                .last();
     }
 
 

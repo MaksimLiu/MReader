@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.base.EventFragment;
+import com.maksimliu.mreader.base.LazyFragment;
 import com.maksimliu.mreader.bean.GankCategoryBean;
 import com.maksimliu.mreader.db.model.GankCategoryModel;
 import com.maksimliu.mreader.event.EventManager;
@@ -31,7 +32,7 @@ import butterknife.ButterKnife;
  * Created by MaksimLiu on 2017/3/17.
  */
 
-public class GankFuLiFragment extends EventFragment implements GankCategoryContract.View {
+public class GankFuLiFragment extends LazyFragment implements GankCategoryContract.View {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.swipeRefresh)
@@ -60,21 +61,11 @@ public class GankFuLiFragment extends EventFragment implements GankCategoryContr
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.universal_list_card, container, false);
         ButterKnife.bind(this, view);
+        setupView();
+        isPrepared=true;
         return view;
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (bundle == null) {
-
-
-            presenter.getGankCategoryDaily(GankContract.FULI_CATEGORY, 1 + "");
-
-        }
-
-    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -150,7 +141,7 @@ public class GankFuLiFragment extends EventFragment implements GankCategoryContr
 
 
         page++;
-        presenter.getGankCategoryDaily(GankContract.FULI_CATEGORY, page + "");
+        presenter.getGankCategoryDaily(GankHomeContract.FULI_CATEGORY, page + "");
 
         adapter.setLoading(false);
     }
@@ -168,9 +159,17 @@ public class GankFuLiFragment extends EventFragment implements GankCategoryContr
         Snackbar.make(recyclerView, errorMsg, Snackbar.LENGTH_LONG).setAction("重试", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.getGankCategoryDaily(GankContract.FULI_CATEGORY, page + "");
+                presenter.getGankCategoryDaily(GankHomeContract.FULI_CATEGORY, page + "");
             }
         });
 
+    }
+
+    @Override
+    protected void lazyLoadData() {
+        if(!isPrepared || !isVisible) {
+            return;
+        }
+        presenter.getGankCategoryDaily(GankHomeContract.FULI_CATEGORY, 1 + "");
     }
 }

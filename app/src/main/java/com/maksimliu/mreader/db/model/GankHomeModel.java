@@ -1,12 +1,16 @@
 package com.maksimliu.mreader.db.model;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+
 import io.realm.RealmObject;
 
 /**
  * Created by MaksimLiu on 2017/3/11.
  */
 
-public class GankDailyModel extends RealmObject {
+public class GankHomeModel extends RealmObject implements Serializable{
     /**
      * _id : 56e0fb6c67765966681b3a11
      * _ns : posts
@@ -68,10 +72,15 @@ public class GankDailyModel extends RealmObject {
      * title : papi酱《张总教你做电影》，哈哈哈哈笑死了...哎呀我操...虐死了...太虐了（见今日视频
      */
 
+    @SerializedName("_id")
     private String _id;
+    @SerializedName("_ns")
     private String _ns;
+    @SerializedName("content")
     private String content;
+    @SerializedName("publishedAt")
     private String publishedAt;
+    @SerializedName("title")
     private String title;
 
     public String get_id() {

@@ -1,15 +1,18 @@
 package com.maksimliu.mreader.db.model;
 
 import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
+import io.realm.internal.Row;
 
 /**
  * Created by MaksimLiu on 2017/3/15.
  */
+
 
 public class GankCategoryModel extends RealmObject implements MultiItemEntity {
 
@@ -26,16 +29,26 @@ public class GankCategoryModel extends RealmObject implements MultiItemEntity {
      * who : bolex
      */
 
+    @SerializedName("_id")
     private String _id;
+    @SerializedName("createdAt")
     private String createdAt;
+    @SerializedName("desc")
     private String desc;
+    @SerializedName("publishedAt")
     private String publishedAt;
+    @SerializedName("source")
     private String source;
+    @SerializedName("type")
     private String type;
+    @SerializedName("url")
     private String url;
+    @SerializedName("used")
     private boolean used;
+    @SerializedName("who")
     private String who;
     @Ignore
+    @SerializedName("images")
     private List<String> images;
 
     public String get_id() {

@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".zhihudaily.ZhiHuDailyDetailActivity"
+            android:name=".zhihudaily.ZhiHuDetailActivity"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".AboutActivity"
