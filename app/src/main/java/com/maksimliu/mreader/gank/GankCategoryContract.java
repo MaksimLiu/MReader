@@ -8,21 +8,21 @@ import com.maksimliu.mreader.db.model.GankCategoryModel;
  * Created by MaksimLiu on 2017/3/16.
  */
 
-public interface GankCategoryContract  {
+public interface GankCategoryContract {
 
 
-    interface View extends BaseView<Presenter>{
+    int NO_CATEGORY_CACHE = 1;
+
+    interface View extends BaseView<Presenter> {
 
     }
 
-    interface Presenter extends BasePresenter{
+    interface Presenter extends BasePresenter {
 
-        GankCategoryModel loadLocalData(String category);
+        void loadCategory(String category);
 
-        GankCategoryModel loadLocalLatest(String category);
 
-        void getGankCategoryDaily(String category,String page);
-
+        void fetchCategory(String category, String page);
 
 
     }

@@ -1,13 +1,15 @@
 package com.maksimliu.mreader.gank;
 
+import com.google.gson.Gson;
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.api.GankApi;
 import com.maksimliu.mreader.bean.GankHomeBean;
-import com.maksimliu.mreader.db.DbHelper;
 import com.maksimliu.mreader.db.model.GankHomeModel;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.network.CacheInterceptor;
+import com.maksimliu.mreader.utils.ACache;
 import com.maksimliu.mreader.utils.DateUtil;
+import com.maksimliu.mreader.utils.MLog;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -33,7 +35,9 @@ public class GankHomePresenter implements GankHomeContract.Presenter {
 
     private GankApi gankApi;
 
-    private DbHelper<GankHomeModel> dbHelper;
+    private ACache aCache;
+
+    private Gson gson;
 
 
     public GankHomePresenter(GankHomeContract.View view) {
@@ -41,7 +45,9 @@ public class GankHomePresenter implements GankHomeContract.Presenter {
         this.view = view;
         view.setPresenter(this);
 
-        dbHelper = DbHelper.getInstance();
+        gson = new Gson();
+        aCache = ACache.get(MReaderApplication.getContext());
+
 
         File cacheFile = new File(MReaderApplication.getContext().getExternalCacheDir(), "gank");
 
@@ -76,31 +82,38 @@ public class GankHomePresenter implements GankHomeContract.Presenter {
     /**
      * 根据发布时间进行查询
      * <p>若返回null，则本地没有今天的数据</p>
+     *
      * @return GankHomeModel
      */
     @Override
-    public GankHomeModel loadLocalData() {
+    public void loadLocalData() {
 
 
-        return dbHelper.getLocalData(GankHomeModel.class, "publishedAt", DateUtil.getToday());
+        String detail = aCache.getAsString("gank_home" + DateUtil.getToday());
+        MLog.i(detail);
 
+        if (detail != null) {
+
+            EventManager.GankHome event = EventManager.GankHome.GET_LATEST;
+
+            GankHomeBean gankHomeBean = gson.fromJson(detail, GankHomeBean.class);
+
+            event.setObject(gankHomeBean);
+
+            EventBus.getDefault().postSticky(event);
+        } else {
+
+            EventManager.GankHome event = EventManager.GankHome.ERROR;
+
+            event.setObject(GankHomeContract.NO_HOME_CACHE);
+            EventBus.getDefault().post(event);
+        }
 
     }
 
-    /**
-     * 查询本地最新的数据
-     * <p>当服务器中无最新数据，查询本地最新数据，
-     * 若返回null,则本地数据库中该表一条数据也没有</p>
-     * @return
-     */
-    @Override
-    public GankHomeModel loadLocalLatest() {
-
-        return dbHelper.getLocalLatest(GankHomeModel.class);
-    }
 
     @Override
-    public void getEveryDayGank(String year, String monthOfYear, String dayOfMonth) {
+    public void fetchGankDaily(String year, String monthOfYear, String dayOfMonth) {
 
 
         final EventManager.GankHome gankEvent = EventManager.GankHome.GET_LATEST;

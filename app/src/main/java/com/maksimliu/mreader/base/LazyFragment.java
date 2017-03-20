@@ -1,5 +1,8 @@
 package com.maksimliu.mreader.base;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+
 /**
  * Created by MaksimLiu on 2017/3/9.
  */
@@ -9,16 +12,18 @@ public abstract class LazyFragment extends EventFragment {
     /**
      * 标志Fragment是否可见
      */
-    protected boolean isVisible=false;
+    protected boolean isVisible = false;
     /**
      * 标志Fragment是否已初始化View
      */
-    protected boolean isPrepared=false;
+    protected boolean isPrepared = false;
 
     /**
      * 标志Fragment是否已加载数据
      */
-    protected boolean isFirstLoad=true;
+    protected boolean isFirstLoad = true;
+
+
 
 
     /**
@@ -27,17 +32,18 @@ public abstract class LazyFragment extends EventFragment {
      * @param isVisibleToUser
      */
 
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
 
 
+        this.isVisible = isVisibleToUser;
 
-        if (getUserVisibleHint()) {
-            isVisible = true;
+        if (isVisible) {
+
             onVisible();
 
-        }else {
-            isVisible=false;
+        } else {
             onInvisible();
         }
 

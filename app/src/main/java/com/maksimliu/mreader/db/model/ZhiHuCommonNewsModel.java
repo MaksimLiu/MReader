@@ -5,14 +5,11 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
-import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
-
 /**
  * Created by MaksimLiu on 2017/3/18.
  */
 
-public class ZhiHuCommonNewsModel extends RealmObject implements Serializable {
+public class ZhiHuCommonNewsModel implements Serializable {
 
     /**
      * images : ["http://pic1.zhimg.com/9e2e2f963d8a959be5e3c06e2e9b8188.jpg"]
@@ -33,7 +30,7 @@ public class ZhiHuCommonNewsModel extends RealmObject implements Serializable {
     private String title;
     @SerializedName("multipic")
     private boolean multipic;
-    @Ignore
+
     @SerializedName("images")
     private List<String> images;
 

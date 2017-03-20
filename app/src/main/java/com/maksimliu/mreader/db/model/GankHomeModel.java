@@ -4,13 +4,11 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-import io.realm.RealmObject;
-
 /**
  * Created by MaksimLiu on 2017/3/11.
  */
 
-public class GankHomeModel extends RealmObject implements Serializable{
+public class GankHomeModel implements Serializable{
     /**
      * _id : 56e0fb6c67765966681b3a11
      * _ns : posts

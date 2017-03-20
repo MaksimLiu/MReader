@@ -10,12 +10,14 @@ import com.maksimliu.mreader.db.model.GankHomeModel;
 
 public interface GankHomeContract {
 
-     String ANDROID_CATEGORY = "Android";
-     String IOS_CATEGORY = "iOS";
-     String OTHERS_CATEGORY = "瞎推荐";
-     String FRONT_END_CATEGORY = "前端";
-     String FULI_CATEGORY = "福利";
-    String EXTRA_RESOURCE="拓展资源";
+    String ANDROID_CATEGORY = "Android";
+    String IOS_CATEGORY = "iOS";
+    String OTHERS_CATEGORY = "瞎推荐";
+    String FRONT_END_CATEGORY = "前端";
+    String FULI_CATEGORY = "福利";
+    String EXTRA_RESOURCE = "拓展资源";
+
+    int NO_HOME_CACHE = 1;
 
     interface View extends BaseView<Presenter> {
 
@@ -24,12 +26,10 @@ public interface GankHomeContract {
 
     interface Presenter extends BasePresenter {
 
-        GankHomeModel loadLocalData();
+        void loadLocalData();
 
-        GankHomeModel loadLocalLatest();
 
-        void getEveryDayGank(String year, String monthOfYear, String dayOfMonth);
-
+        void fetchGankDaily(String year, String monthOfYear, String dayOfMonth);
 
 
     }

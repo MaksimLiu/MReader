@@ -10,13 +10,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
+import com.google.gson.Gson;
+import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.R;
-import com.maksimliu.mreader.base.EventFragment;
 import com.maksimliu.mreader.base.LazyFragment;
 import com.maksimliu.mreader.bean.GankCategoryBean;
 import com.maksimliu.mreader.db.model.GankCategoryModel;
 import com.maksimliu.mreader.event.EventManager;
+import com.maksimliu.mreader.utils.ACache;
 import com.maksimliu.mreader.utils.MLog;
 import com.maksimliu.mreader.views.adapter.GankRvAdapter;
 
@@ -39,6 +42,8 @@ public class GankOthersFragment extends LazyFragment implements GankCategoryCont
     RecyclerView recyclerView;
     @BindView(R.id.swipeRefresh)
     SwipeRefreshLayout swipeRefresh;
+    @BindView(R.id.pb_gank)
+    ProgressBar pbGank;
 
     public GankOthersFragment() {
         // Required empty public constructor
@@ -61,6 +66,10 @@ public class GankOthersFragment extends LazyFragment implements GankCategoryCont
 
     private int page = 1;
 
+    private ACache aCache;
+
+    private Gson gson;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,6 +79,7 @@ public class GankOthersFragment extends LazyFragment implements GankCategoryCont
         ButterKnife.bind(this, view);
         setupView();
         isPrepared = true;
+        lazyLoadData();
         return view;
     }
 
@@ -84,6 +94,20 @@ public class GankOthersFragment extends LazyFragment implements GankCategoryCont
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGankCategoryEvent(EventManager.GankCategory androidEvent) {
 
+
+
+        if (androidEvent == EventManager.GankCategory.ERROR) {
+
+            int error_code = (int) androidEvent.getObject();
+            switch (error_code) {
+
+                case GankCategoryContract.NO_CATEGORY_CACHE:
+                    presenter.fetchCategory(GankHomeContract.OTHERS_CATEGORY, page + "");
+                    break;
+            }
+            return;
+        }
+
         if (!EventManager.GankCategory.OTHERS.equals(androidEvent)) {
             MLog.i("is not OTHERS Event");
             return;
@@ -94,6 +118,7 @@ public class GankOthersFragment extends LazyFragment implements GankCategoryCont
 //        ((GankAdapter)recyclerView.getAdapter()).setShowFooter(false);
 //        ((GankAdapter)recyclerView.getAdapter()).addItems(bean.getResults());
 
+        aCache.put("gank_category" + GankHomeContract.OTHERS_CATEGORY, gson.toJson(bean));
         ((GankRvAdapter) recyclerView.getAdapter()).addData(bean.getResults());
 //        adapter.loadMoreComplete();
     }
@@ -103,6 +128,10 @@ public class GankOthersFragment extends LazyFragment implements GankCategoryCont
 
 
         new GankCategoryPresenter(this);
+
+        aCache = ACache.get(MReaderApplication.getContext());
+
+        gson = new Gson();
 
         adapter = new GankRvAdapter(this, new ArrayList<GankCategoryModel>());
 
@@ -135,6 +164,14 @@ public class GankOthersFragment extends LazyFragment implements GankCategoryCont
             }
         });
 
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                presenter.fetchCategory(GankHomeContract.OTHERS_CATEGORY,page+"");
+                swipeRefresh.setRefreshing(false);
+            }
+        });
+
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -146,7 +183,7 @@ public class GankOthersFragment extends LazyFragment implements GankCategoryCont
 
 
         page++;
-        presenter.getGankCategoryDaily(GankHomeContract.OTHERS_CATEGORY, page + "");
+        presenter.fetchCategory(GankHomeContract.OTHERS_CATEGORY, page + "");
 
         adapter.setLoading(false);
     }
@@ -164,7 +201,7 @@ public class GankOthersFragment extends LazyFragment implements GankCategoryCont
         Snackbar.make(recyclerView, errorMsg, Snackbar.LENGTH_LONG).setAction("重试", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.getGankCategoryDaily(GankHomeContract.OTHERS_CATEGORY, page + "");
+                presenter.fetchCategory(GankHomeContract.OTHERS_CATEGORY, page + "");
             }
         });
 
@@ -175,7 +212,7 @@ public class GankOthersFragment extends LazyFragment implements GankCategoryCont
         if (!isPrepared || !isVisible) {
             return;
         }
-        MLog.i("lazyLoadData\t"+this.getClass().getSimpleName());
-        presenter.getGankCategoryDaily(GankHomeContract.OTHERS_CATEGORY, 1 + "");
+        MLog.i("lazyLoadData\t" + this.getClass().getSimpleName() + "\t" + isVisible);
+        presenter.loadCategory(GankHomeContract.OTHERS_CATEGORY);
     }
 }

@@ -10,13 +10,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
+import com.google.gson.Gson;
+import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.R;
-import com.maksimliu.mreader.base.EventFragment;
 import com.maksimliu.mreader.base.LazyFragment;
 import com.maksimliu.mreader.bean.GankCategoryBean;
 import com.maksimliu.mreader.db.model.GankCategoryModel;
 import com.maksimliu.mreader.event.EventManager;
+import com.maksimliu.mreader.utils.ACache;
 import com.maksimliu.mreader.utils.MLog;
 import com.maksimliu.mreader.views.adapter.GankRvAdapter;
 
@@ -39,6 +42,12 @@ public class GankIOSFragment extends LazyFragment implements GankCategoryContrac
     RecyclerView recyclerView;
     @BindView(R.id.swipeRefresh)
     SwipeRefreshLayout swipeRefresh;
+    @BindView(R.id.pb_gank)
+    ProgressBar pbGank;
+
+    private ACache aCache;
+
+    private Gson gson;
 
     public GankIOSFragment() {
         // Required empty public constructor
@@ -70,11 +79,10 @@ public class GankIOSFragment extends LazyFragment implements GankCategoryContrac
         View view = inflater.inflate(R.layout.universal_list_card, container, false);
         ButterKnife.bind(this, view);
         setupView();
-        isPrepared=true;
+        isPrepared = true;
+        lazyLoadData();
         return view;
     }
-
-
 
 
     @Override
@@ -87,15 +95,32 @@ public class GankIOSFragment extends LazyFragment implements GankCategoryContrac
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGankCategoryEvent(EventManager.GankCategory androidEvent) {
 
+
+
+        if (androidEvent == EventManager.GankCategory.ERROR) {
+
+            int error_code = (int) androidEvent.getObject();
+            switch (error_code) {
+
+                case GankCategoryContract.NO_CATEGORY_CACHE:
+                    presenter.fetchCategory(GankHomeContract.IOS_CATEGORY, page + "");
+                    break;
+            }
+            return;
+        }
+
         if (!EventManager.GankCategory.IOS.equals(androidEvent)) {
             MLog.i("is not IOS Event");
             return;
         }
         MLog.i("is  IOS Event");
 
+
         GankCategoryBean bean = (GankCategoryBean) androidEvent.getObject();
 //        ((GankAdapter)recyclerView.getAdapter()).setShowFooter(false);
 //        ((GankAdapter)recyclerView.getAdapter()).addItems(bean.getResults());
+
+        aCache.put("gank_category" + GankHomeContract.IOS_CATEGORY, gson.toJson(bean));
 
         ((GankRvAdapter) recyclerView.getAdapter()).addData(bean.getResults());
 //        adapter.loadMoreComplete();
@@ -106,6 +131,10 @@ public class GankIOSFragment extends LazyFragment implements GankCategoryContrac
 
 
         new GankCategoryPresenter(this);
+
+        aCache = ACache.get(MReaderApplication.getContext());
+
+        gson = new Gson();
 
         adapter = new GankRvAdapter(this, new ArrayList<GankCategoryModel>());
 
@@ -138,6 +167,14 @@ public class GankIOSFragment extends LazyFragment implements GankCategoryContrac
             }
         });
 
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                presenter.fetchCategory(GankHomeContract.IOS_CATEGORY,page+"");
+                swipeRefresh.setRefreshing(false);
+            }
+        });
+
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -149,7 +186,7 @@ public class GankIOSFragment extends LazyFragment implements GankCategoryContrac
 
 
         page++;
-        presenter.getGankCategoryDaily(GankHomeContract.IOS_CATEGORY, page + "");
+        presenter.fetchCategory(GankHomeContract.IOS_CATEGORY, page + "");
 
         adapter.setLoading(false);
     }
@@ -167,7 +204,7 @@ public class GankIOSFragment extends LazyFragment implements GankCategoryContrac
         Snackbar.make(recyclerView, errorMsg, Snackbar.LENGTH_LONG).setAction("重试", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.getGankCategoryDaily(GankHomeContract.IOS_CATEGORY, page + "");
+                presenter.fetchCategory(GankHomeContract.IOS_CATEGORY, page + "");
             }
         });
 
@@ -175,11 +212,11 @@ public class GankIOSFragment extends LazyFragment implements GankCategoryContrac
 
     @Override
     protected void lazyLoadData() {
-        if(!isPrepared || !isVisible) {
+        if (!isPrepared || !isVisible) {
             return;
         }
-        MLog.i("lazyLoadData\t"+this.getClass().getSimpleName());
-        presenter.getGankCategoryDaily(GankHomeContract.IOS_CATEGORY, 1 + "");
+        MLog.i("lazyLoadData\t" + this.getClass().getSimpleName() + "\t" + isVisible);
+        presenter.loadCategory(GankHomeContract.IOS_CATEGORY);
 
     }
 }

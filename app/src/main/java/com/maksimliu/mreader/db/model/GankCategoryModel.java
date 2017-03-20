@@ -5,16 +5,12 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
-import io.realm.internal.Row;
-
 /**
  * Created by MaksimLiu on 2017/3/15.
  */
 
 
-public class GankCategoryModel extends RealmObject implements MultiItemEntity {
+public class GankCategoryModel implements MultiItemEntity {
 
     /**
      * _id : 58c259ce421aa90f03345158
@@ -47,7 +43,6 @@ public class GankCategoryModel extends RealmObject implements MultiItemEntity {
     private boolean used;
     @SerializedName("who")
     private String who;
-    @Ignore
     @SerializedName("images")
     private List<String> images;
 

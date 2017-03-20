@@ -59,7 +59,7 @@ public class GankFragment extends BaseFragment {
 
         FragmentAdapter adapter = new FragmentAdapter(getChildFragmentManager(), tabs);
 
-        vpGank.setOffscreenPageLimit(4);
+//        vpGank.setOffscreenPageLimit(4);
         vpGank.setAdapter(adapter);
         TabLayout tabLayout=((TabLayout)getActivity().findViewById(R.id.tab));
         tabLayout.setupWithViewPager(vpGank);

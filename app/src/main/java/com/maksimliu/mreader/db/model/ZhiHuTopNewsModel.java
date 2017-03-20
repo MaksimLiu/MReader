@@ -4,13 +4,11 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-import io.realm.RealmObject;
-
 /**
  * Created by MaksimLiu on 2017/3/18.
  */
 
-public class ZhiHuTopNewsModel extends RealmObject implements Serializable {
+public class ZhiHuTopNewsModel implements Serializable {
 
     /**
      * image : http://pic4.zhimg.com/58cd9cdfeb831a999fd569471a39cdcb.jpg

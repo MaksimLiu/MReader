@@ -2,18 +2,13 @@ package com.maksimliu.mreader.db.model;
 
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 
-import io.realm.RealmObject;
-import io.realm.annotations.Index;
-import io.realm.annotations.PrimaryKey;
-
 /**
  * Created by MaksimLiu on 2017/3/18.
  */
 
-public class ZhiHuNewsModel extends RealmObject implements MultiItemEntity {
+public class ZhiHuNewsModel  implements MultiItemEntity {
 
 
-    @PrimaryKey
     private String date;
 
     private ZhiHuCommonNewsModel commonNewsModel;

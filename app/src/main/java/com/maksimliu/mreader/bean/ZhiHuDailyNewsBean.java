@@ -7,8 +7,6 @@ import com.maksimliu.mreader.db.model.ZhiHuTopNewsModel;
 import java.io.Serializable;
 import java.util.List;
 
-import io.realm.annotations.Ignore;
-
 /**
  * Created by MaksimLiu on 2017/3/4.
  */

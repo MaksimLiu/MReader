@@ -17,8 +17,7 @@ public class EventManager {
         ADD_OLD_NEWS,//添加过往信息
         SET_OLD_NEWS,//查看具体某天的信息
         POST_NEWS_ID,//发送某个信息的ID,用来获取该信息的具体内容
-        ERROR
-        ;
+        ERROR;
 
         private Object object;
 
@@ -41,8 +40,7 @@ public class EventManager {
 
         GET_DETAIL, //查看信息的具体内容
         POST_NEWS_ID,
-        ERROR
-        ;
+        ERROR;
 
         private Object object;
 
@@ -63,7 +61,8 @@ public class EventManager {
      * Gank 主页事件
      */
     public enum GankHome implements BaseEvent {
-        GET_LATEST;
+        GET_LATEST,
+        ERROR;
 
         private Object object;
 
@@ -88,8 +87,8 @@ public class EventManager {
         OTHERS, //瞎推荐
         FRONT_END, //前端
         FULI, //福利（妹子图）
-        EXTRA_RESOURCE; //拓展资源
-
+        EXTRA_RESOURCE,//拓展资源
+        ERROR;
         private Object object;
 
         @Override

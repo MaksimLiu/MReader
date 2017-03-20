@@ -1,12 +1,14 @@
 package com.maksimliu.mreader.gank;
 
+import com.google.gson.Gson;
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.api.GankApi;
 import com.maksimliu.mreader.bean.GankCategoryBean;
-import com.maksimliu.mreader.db.DbHelper;
 import com.maksimliu.mreader.db.model.GankCategoryModel;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.network.CacheInterceptor;
+import com.maksimliu.mreader.utils.ACache;
+import com.maksimliu.mreader.utils.MLog;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -32,7 +34,9 @@ public class GankCategoryPresenter implements GankCategoryContract.Presenter {
 
     private GankApi gankApi;
 
-    private DbHelper<GankCategoryModel> dbHelper;
+    private ACache aCache;
+
+    private Gson gson;
 
 
     public GankCategoryPresenter(GankCategoryContract.View view) {
@@ -42,7 +46,9 @@ public class GankCategoryPresenter implements GankCategoryContract.Presenter {
         view.setPresenter(this);
 
 
-        dbHelper = DbHelper.getInstance();
+        aCache = ACache.get(MReaderApplication.getContext());
+        gson = new Gson();
+
 
         File cacheFile = new File(MReaderApplication.getContext().getExternalCacheDir(), "gank");
 
@@ -78,17 +84,57 @@ public class GankCategoryPresenter implements GankCategoryContract.Presenter {
 
 
     @Override
-    public GankCategoryModel loadLocalData(String category) {
-        return null;
+    public void loadCategory(String category) {
+
+        final EventManager.GankCategory gankCategory;
+
+        switch (category) {
+
+            case GankApi.ANDROID_CATEGORY_TYPE:
+                gankCategory = EventManager.GankCategory.ANDROID;
+                break;
+            case GankApi.IOS_CATEGORY_TYPE:
+                gankCategory = EventManager.GankCategory.IOS;
+                break;
+            case GankApi.FRONT_END_CATEGORY_TYPE:
+                gankCategory = EventManager.GankCategory.FRONT_END;
+                break;
+            case GankApi.OTHERS_CATEGORY_TYPE:
+                gankCategory = EventManager.GankCategory.OTHERS;
+                break;
+            case GankApi.FULI_CATEGORY_TYPE:
+                gankCategory = EventManager.GankCategory.FULI;
+                break;
+            default:
+                gankCategory = EventManager.GankCategory.EXTRA_RESOURCE;
+                break;
+        }
+
+
+        String detail = aCache.getAsString("gank_category" + category);
+        MLog.i(detail);
+        if (detail != null) {
+
+            GankCategoryBean bean = gson.fromJson(detail, GankCategoryBean.class);
+
+            gankCategory.setObject(bean);
+            EventBus.getDefault().post(gankCategory);
+        } else {
+
+
+            EventManager.GankCategory event = EventManager.GankCategory.ERROR;
+
+            event.setObject(GankCategoryContract.NO_CATEGORY_CACHE);
+
+            EventBus.getDefault().post(event);
+        }
+
+
     }
 
-    @Override
-    public GankCategoryModel loadLocalLatest(String category) {
-        return null;
-    }
 
     @Override
-    public void getGankCategoryDaily(String category,String page) {
+    public void fetchCategory(String category, String page) {
 
 
         final EventManager.GankCategory gankCategory;
