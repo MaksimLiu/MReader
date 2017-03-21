@@ -2,7 +2,6 @@ package com.maksimliu.mreader.gank;
 
 import com.maksimliu.mreader.base.BasePresenter;
 import com.maksimliu.mreader.base.BaseView;
-import com.maksimliu.mreader.db.model.GankHomeModel;
 
 /**
  * Created by MaksimLiu on 2017/3/9.
@@ -16,6 +15,8 @@ public interface GankHomeContract {
     String FRONT_END_CATEGORY = "前端";
     String FULI_CATEGORY = "福利";
     String EXTRA_RESOURCE = "拓展资源";
+
+    String HOME="HOME";
 
     int NO_HOME_CACHE = 1;
 

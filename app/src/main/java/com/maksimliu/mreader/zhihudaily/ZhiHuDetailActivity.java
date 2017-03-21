@@ -19,7 +19,7 @@ import com.google.gson.Gson;
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.base.EventActivity;
-import com.maksimliu.mreader.bean.ZhiHuDailyDetailBean;
+import com.maksimliu.mreader.entity.ZhiHuDetailBean;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.utils.ACache;
 import com.maksimliu.mreader.utils.MLog;
@@ -136,7 +136,7 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
        if (event== EventManager.ZhiHuNewsDetail.GET_DETAIL){
 
            MLog.i("onZhiHuNewsDetail GET_DETAIL");
-           ZhiHuDailyDetailBean detail = (ZhiHuDailyDetailBean) event.getObject();
+           ZhiHuDetailBean detail = (ZhiHuDetailBean) event.getObject();
 
 
            aCache.put("zhihu_detail" + detail.getId(), gson.toJson(detail));
@@ -203,4 +203,6 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
                 }).show();
 
     }
+
+
 }

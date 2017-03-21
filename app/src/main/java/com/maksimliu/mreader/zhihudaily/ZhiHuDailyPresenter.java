@@ -3,11 +3,13 @@ package com.maksimliu.mreader.zhihudaily;
 import com.google.gson.Gson;
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.api.ZhiHuDailyApi;
-import com.maksimliu.mreader.bean.ZhiHuDailyDetailBean;
-import com.maksimliu.mreader.bean.ZhiHuDailyNewsBean;
+import com.maksimliu.mreader.common.AppConfig;
+import com.maksimliu.mreader.entity.ZhiHuDailyNewsBean;
 import com.maksimliu.mreader.event.EventManager;
+import com.maksimliu.mreader.gank.GankHomeContract;
 import com.maksimliu.mreader.network.CacheInterceptor;
 import com.maksimliu.mreader.utils.ACache;
+import com.maksimliu.mreader.utils.CacheManager;
 import com.maksimliu.mreader.utils.DateUtil;
 import com.maksimliu.mreader.utils.MLog;
 
@@ -35,9 +37,7 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
 
     private ZhiHuDailyApi zhiHuDailyApi;
 
-    private ACache aCache;
-
-    private Gson gson;
+    private CacheManager<ZhiHuDailyNewsBean> cacheManager;
 
     public ZhiHuDailyPresenter(ZhiHuDailyContract.View view) {
 
@@ -60,11 +60,9 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
                 .baseUrl(ZhiHuDailyApi.BASE_API_4_URL)
                 .build();
 
-        aCache = ACache.get(MReaderApplication.getContext());
-
-        gson = new Gson();
-
         zhiHuDailyApi = retrofit.create(ZhiHuDailyApi.class);
+
+        cacheManager = new CacheManager<>(MReaderApplication.getContext(), AppConfig.ZHIHU_CACHE_NAME, ZhiHuDailyNewsBean.class);
 
 
     }
@@ -114,11 +112,9 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
         EventManager.ZhiHuDailyNews event;
         MLog.i("loadLatestNews");
 
-        String dailyNews = aCache.getAsString("zhihu_daily_news" + DateUtil.getToday());
-        if (dailyNews != null) {
-            MLog.i(dailyNews);
+        ZhiHuDailyNewsBean bean=cacheManager.get(GankHomeContract.HOME+ DateUtil.getToday());
+        if (bean != null) {
             event = EventManager.ZhiHuDailyNews.GET_LATEST;
-            ZhiHuDailyNewsBean bean = gson.fromJson(dailyNews, ZhiHuDailyNewsBean.class);
             event.setObject(bean);
             EventBus.getDefault().post(event);
 
@@ -171,12 +167,9 @@ public class ZhiHuDailyPresenter implements ZhiHuDailyContract.Presenter {
         EventManager.ZhiHuDailyNews event;
         MLog.i("loadOldNews");
 
-        String oldNews = aCache.getAsString("zhihu_daily_news" + DateUtil.getCurrentDate(calendar));
-        if (oldNews != null) {
-            MLog.i(DateUtil.getCurrentDate(calendar));
-            MLog.i(oldNews);
+        ZhiHuDailyNewsBean bean = cacheManager.get(GankHomeContract.HOME+ DateUtil.getCurrentDate(calendar));
+        if (bean != null) {
             event = EventManager.ZhiHuDailyNews.ADD_OLD_NEWS;
-            ZhiHuDailyNewsBean bean = gson.fromJson(oldNews, ZhiHuDailyNewsBean.class);
             event.setObject(bean);
             EventBus.getDefault().post(event);
 

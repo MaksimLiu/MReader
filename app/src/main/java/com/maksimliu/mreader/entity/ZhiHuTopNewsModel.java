@@ -1,4 +1,4 @@
-package com.maksimliu.mreader.db.model;
+package com.maksimliu.mreader.entity;
 
 import com.google.gson.annotations.SerializedName;
 

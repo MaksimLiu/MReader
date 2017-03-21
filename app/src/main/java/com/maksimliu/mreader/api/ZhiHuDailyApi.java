@@ -1,7 +1,7 @@
 package com.maksimliu.mreader.api;
 
-import com.maksimliu.mreader.bean.ZhiHuDailyDetailBean;
-import com.maksimliu.mreader.bean.ZhiHuDailyNewsBean;
+import com.maksimliu.mreader.entity.ZhiHuDetailBean;
+import com.maksimliu.mreader.entity.ZhiHuDailyNewsBean;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -34,7 +34,7 @@ public interface ZhiHuDailyApi {
      * @param id 新闻id
      */
     @GET("news/{id}")
-    Call<ZhiHuDailyDetailBean> getNewsDetail(@Path("id") String id);
+    Call<ZhiHuDetailBean> getNewsDetail(@Path("id") String id);
 
 
     /**

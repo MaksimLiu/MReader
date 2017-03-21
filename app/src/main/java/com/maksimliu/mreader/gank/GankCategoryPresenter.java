@@ -1,14 +1,12 @@
 package com.maksimliu.mreader.gank;
 
-import com.google.gson.Gson;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.api.GankApi;
-import com.maksimliu.mreader.bean.GankCategoryBean;
-import com.maksimliu.mreader.db.model.GankCategoryModel;
+import com.maksimliu.mreader.common.AppConfig;
+import com.maksimliu.mreader.entity.GankCategoryBean;
 import com.maksimliu.mreader.event.EventManager;
-import com.maksimliu.mreader.network.CacheInterceptor;
-import com.maksimliu.mreader.utils.ACache;
-import com.maksimliu.mreader.utils.MLog;
+import com.maksimliu.mreader.utils.CacheManager;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -34,10 +32,7 @@ public class GankCategoryPresenter implements GankCategoryContract.Presenter {
 
     private GankApi gankApi;
 
-    private ACache aCache;
-
-    private Gson gson;
-
+    private CacheManager<GankCategoryBean> cacheManager;
 
     public GankCategoryPresenter(GankCategoryContract.View view) {
 
@@ -45,10 +40,7 @@ public class GankCategoryPresenter implements GankCategoryContract.Presenter {
         this.view = view;
         view.setPresenter(this);
 
-
-        aCache = ACache.get(MReaderApplication.getContext());
-        gson = new Gson();
-
+        cacheManager = new CacheManager<>(MReaderApplication.getContext(), AppConfig.GANK_CACHE_NAME,GankCategoryBean.class);
 
         File cacheFile = new File(MReaderApplication.getContext().getExternalCacheDir(), "gank");
 
@@ -56,7 +48,7 @@ public class GankCategoryPresenter implements GankCategoryContract.Presenter {
                 .connectTimeout(8, TimeUnit.SECONDS)
                 .readTimeout(5, TimeUnit.SECONDS)
                 .writeTimeout(5, TimeUnit.SECONDS)
-                .addNetworkInterceptor(new CacheInterceptor())
+                .addNetworkInterceptor(new StethoInterceptor())
                 .cache(new Cache(cacheFile, 1024 * 1024 * 10)) //10M缓存空间
                 .build();
 
@@ -67,7 +59,6 @@ public class GankCategoryPresenter implements GankCategoryContract.Presenter {
                 .build();
 
         gankApi = retrofit.create(GankApi.class);
-
 
     }
 
@@ -88,43 +79,48 @@ public class GankCategoryPresenter implements GankCategoryContract.Presenter {
 
         final EventManager.GankCategory gankCategory;
 
+        int eventType;
+
         switch (category) {
 
             case GankApi.ANDROID_CATEGORY_TYPE:
                 gankCategory = EventManager.GankCategory.ANDROID;
+                eventType = GankCategoryContract.NO_ANDROID_CACHE;
                 break;
             case GankApi.IOS_CATEGORY_TYPE:
                 gankCategory = EventManager.GankCategory.IOS;
+                eventType = GankCategoryContract.NO_IOS_CACHE;
                 break;
             case GankApi.FRONT_END_CATEGORY_TYPE:
                 gankCategory = EventManager.GankCategory.FRONT_END;
+                eventType = GankCategoryContract.NO_FRONT_END_CACHE;
                 break;
             case GankApi.OTHERS_CATEGORY_TYPE:
                 gankCategory = EventManager.GankCategory.OTHERS;
+                eventType = GankCategoryContract.NO_OTHERS_CACHE;
                 break;
             case GankApi.FULI_CATEGORY_TYPE:
                 gankCategory = EventManager.GankCategory.FULI;
+                eventType = GankCategoryContract.NO_FULI_CACHE;
                 break;
             default:
                 gankCategory = EventManager.GankCategory.EXTRA_RESOURCE;
+                eventType = GankCategoryContract.NO_EXTRA_RESOURCE;
                 break;
         }
 
 
-        String detail = aCache.getAsString("gank_category" + category);
-        MLog.i(detail);
-        if (detail != null) {
+        GankCategoryBean bean = cacheManager.get(category);
 
-            GankCategoryBean bean = gson.fromJson(detail, GankCategoryBean.class);
+        if (bean != null) {
 
             gankCategory.setObject(bean);
             EventBus.getDefault().post(gankCategory);
         } else {
 
-
             EventManager.GankCategory event = EventManager.GankCategory.ERROR;
 
-            event.setObject(GankCategoryContract.NO_CATEGORY_CACHE);
+            event.setObject(eventType);
 
             EventBus.getDefault().post(event);
         }

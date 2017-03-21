@@ -13,9 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.maksimliu.mreader.base.EventActivity;
-import com.maksimliu.mreader.bean.ZhiHuDailyNewsBean;
+import com.maksimliu.mreader.entity.ZhiHuDailyNewsBean;
 import com.maksimliu.mreader.gank.GankFragment;
-import com.maksimliu.mreader.gank.GankHomeFragment;
 import com.maksimliu.mreader.utils.FragmentUtil;
 import com.maksimliu.mreader.zhihudaily.ZhiHuDailyHomeFragment;
 

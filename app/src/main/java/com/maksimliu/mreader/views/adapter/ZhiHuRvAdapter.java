@@ -3,7 +3,7 @@ package com.maksimliu.mreader.views.adapter;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.maksimliu.mreader.R;
-import com.maksimliu.mreader.db.model.ZhiHuNewsModel;
+import com.maksimliu.mreader.entity.ZhiHuNewsModel;
 
 import java.util.List;
 

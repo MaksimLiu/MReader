@@ -3,7 +3,7 @@ package com.maksimliu.mreader.zhihudaily;
 import com.google.gson.Gson;
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.api.ZhiHuDailyApi;
-import com.maksimliu.mreader.bean.ZhiHuDailyDetailBean;
+import com.maksimliu.mreader.entity.ZhiHuDetailBean;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.network.CacheInterceptor;
 import com.maksimliu.mreader.utils.ACache;
@@ -80,11 +80,11 @@ public class ZhiHuDetailPresenter implements ZhiHuDetailContract.Presenter {
 
         final EventManager.ZhiHuNewsDetail event = EventManager.ZhiHuNewsDetail.GET_DETAIL;
 
-        Call<ZhiHuDailyDetailBean> latestCall = zhiHuDailyApi.getNewsDetail(id);
+        Call<ZhiHuDetailBean> latestCall = zhiHuDailyApi.getNewsDetail(id);
 
-        latestCall.enqueue(new Callback<ZhiHuDailyDetailBean>() {
+        latestCall.enqueue(new Callback<ZhiHuDetailBean>() {
             @Override
-            public void onResponse(Call<ZhiHuDailyDetailBean> call, Response<ZhiHuDailyDetailBean> response) {
+            public void onResponse(Call<ZhiHuDetailBean> call, Response<ZhiHuDetailBean> response) {
 
                 MLog.i(event.getClass().getSimpleName());
                 event.setObject(response.body());
@@ -93,7 +93,7 @@ public class ZhiHuDetailPresenter implements ZhiHuDetailContract.Presenter {
             }
 
             @Override
-            public void onFailure(Call<ZhiHuDailyDetailBean> call, Throwable t) {
+            public void onFailure(Call<ZhiHuDetailBean> call, Throwable t) {
 
 
                 view.showError("加载失败 " + t.getMessage());
@@ -112,7 +112,7 @@ public class ZhiHuDetailPresenter implements ZhiHuDetailContract.Presenter {
             final EventManager.ZhiHuNewsDetail detailEvent = EventManager.ZhiHuNewsDetail.GET_DETAIL;
 
             MLog.i(detail);
-            ZhiHuDailyDetailBean detailBean = gson.fromJson(detail, ZhiHuDailyDetailBean.class);
+            ZhiHuDetailBean detailBean = gson.fromJson(detail, ZhiHuDetailBean.class);
 
 //          --  MLog.i(detailEvent.getClass().getSimpleName());
             detailEvent.setObject(detailBean);

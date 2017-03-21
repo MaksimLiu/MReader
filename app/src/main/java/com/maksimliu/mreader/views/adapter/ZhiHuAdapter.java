@@ -1,6 +1,5 @@
 package com.maksimliu.mreader.views.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
@@ -14,12 +13,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.maksimliu.mreader.R;
-import com.maksimliu.mreader.db.model.ZhiHuCommonNewsModel;
-import com.maksimliu.mreader.event.EventManager;
-import com.maksimliu.mreader.utils.MLog;
+import com.maksimliu.mreader.entity.ZhiHuCommonNewsModel;
 import com.maksimliu.mreader.zhihudaily.ZhiHuDetailActivity;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 

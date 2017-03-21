@@ -1,7 +1,7 @@
 package com.maksimliu.mreader.api;
 
-import com.maksimliu.mreader.bean.GankHomeBean;
-import com.maksimliu.mreader.bean.GankCategoryBean;
+import com.maksimliu.mreader.entity.GankHomeBean;
+import com.maksimliu.mreader.entity.GankCategoryBean;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -17,7 +17,7 @@ public interface GankApi {
 
     String BASE_API_URL = "http://gank.io/api/";
 
-    String ANDROID_CATEGORY_TYPE = "Android";
+    String ANDROID_CATEGORY_TYPE ="Android";
 
     String IOS_CATEGORY_TYPE = "iOS";
 

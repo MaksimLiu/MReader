@@ -1,6 +1,4 @@
-package com.maksimliu.mreader.bean;
-
-import com.maksimliu.mreader.db.model.GankCategoryModel;
+package com.maksimliu.mreader.entity;
 
 import java.util.List;
 

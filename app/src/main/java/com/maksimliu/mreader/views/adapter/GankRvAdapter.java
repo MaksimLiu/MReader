@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.maksimliu.mreader.R;
-import com.maksimliu.mreader.db.model.GankCategoryModel;
+import com.maksimliu.mreader.entity.GankCategoryModel;
 import com.maksimliu.mreader.gank.GankFuLiFragment;
 
 import java.util.List;

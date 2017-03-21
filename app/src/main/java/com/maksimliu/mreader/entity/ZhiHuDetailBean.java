@@ -1,4 +1,4 @@
-package com.maksimliu.mreader.bean;
+package com.maksimliu.mreader.entity;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import java.util.List;
  * Created by MaksimLiu on 2017/3/6.
  */
 
-public class ZhiHuDailyDetailBean {
+public class ZhiHuDetailBean {
 
 
     /**

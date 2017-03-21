@@ -1,6 +1,4 @@
-package com.maksimliu.mreader.bean;
-
-import com.maksimliu.mreader.db.model.GankHomeModel;
+package com.maksimliu.mreader.entity;
 
 import java.io.Serializable;
 import java.util.List;

@@ -1,8 +1,6 @@
-package com.maksimliu.mreader.bean;
+package com.maksimliu.mreader.entity;
 
 import com.google.gson.annotations.SerializedName;
-import com.maksimliu.mreader.db.model.ZhiHuCommonNewsModel;
-import com.maksimliu.mreader.db.model.ZhiHuTopNewsModel;
 
 import java.io.Serializable;
 import java.util.List;

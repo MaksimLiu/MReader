@@ -2,7 +2,6 @@ package com.maksimliu.mreader.gank;
 
 import com.maksimliu.mreader.base.BasePresenter;
 import com.maksimliu.mreader.base.BaseView;
-import com.maksimliu.mreader.db.model.GankCategoryModel;
 
 /**
  * Created by MaksimLiu on 2017/3/16.
@@ -11,7 +10,12 @@ import com.maksimliu.mreader.db.model.GankCategoryModel;
 public interface GankCategoryContract {
 
 
-    int NO_CATEGORY_CACHE = 1;
+    int NO_ANDROID_CACHE = 1;
+    int NO_IOS_CACHE=2;
+    int NO_FULI_CACHE=3;
+    int NO_OTHERS_CACHE=4;
+    int NO_FRONT_END_CACHE=5;
+    int NO_EXTRA_RESOURCE=6;
 
     interface View extends BaseView<Presenter> {
 

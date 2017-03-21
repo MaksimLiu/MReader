@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.base.BaseFragment;
+import com.maksimliu.mreader.base.BaseView;
 import com.maksimliu.mreader.views.adapter.FragmentAdapter;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class GankFragment extends BaseFragment {
+public class GankFragment extends BaseFragment implements BaseView{
 
 
     @BindView(R.id.vp_gank)
@@ -45,8 +46,17 @@ public class GankFragment extends BaseFragment {
 
 
     @Override
-    protected void setupView() {
+    public void setPresenter(Object presnter) {
 
+    }
+
+    @Override
+    public void showError(String errorMsg) {
+
+    }
+
+    @Override
+    public void setupView() {
 
         List<String> tabs = new ArrayList<>();
         tabs.add("主页");
@@ -59,11 +69,14 @@ public class GankFragment extends BaseFragment {
 
         FragmentAdapter adapter = new FragmentAdapter(getChildFragmentManager(), tabs);
 
-//        vpGank.setOffscreenPageLimit(4);
         vpGank.setAdapter(adapter);
         TabLayout tabLayout=((TabLayout)getActivity().findViewById(R.id.tab));
         tabLayout.setupWithViewPager(vpGank);
 
+    }
+
+    @Override
+    public void initListener() {
 
     }
 }

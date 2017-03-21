@@ -1,8 +1,5 @@
 package com.maksimliu.mreader.base;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-
 /**
  * Created by MaksimLiu on 2017/3/9.
  */
@@ -49,6 +46,12 @@ public abstract class LazyFragment extends EventFragment {
 
         super.setUserVisibleHint(isVisibleToUser);
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        lazyLoadData();
     }
 
     /**

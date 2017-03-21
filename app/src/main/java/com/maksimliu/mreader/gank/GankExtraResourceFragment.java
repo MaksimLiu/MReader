@@ -15,11 +15,14 @@ import android.widget.ProgressBar;
 import com.google.gson.Gson;
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.R;
+import com.maksimliu.mreader.api.GankApi;
 import com.maksimliu.mreader.base.LazyFragment;
-import com.maksimliu.mreader.bean.GankCategoryBean;
-import com.maksimliu.mreader.db.model.GankCategoryModel;
+import com.maksimliu.mreader.common.AppConfig;
+import com.maksimliu.mreader.entity.GankCategoryBean;
+import com.maksimliu.mreader.entity.GankCategoryModel;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.utils.ACache;
+import com.maksimliu.mreader.utils.CacheManager;
 import com.maksimliu.mreader.utils.MLog;
 import com.maksimliu.mreader.views.adapter.GankRvAdapter;
 
@@ -49,7 +52,6 @@ public class GankExtraResourceFragment extends LazyFragment implements GankCateg
         // Required empty public constructor
     }
 
-
     /**
      * 获取最后一个可见Item位置
      * 用于判断RecyclerView是否已经到达底部
@@ -57,19 +59,18 @@ public class GankExtraResourceFragment extends LazyFragment implements GankCateg
     private int lastVisibleItemPosition;
 
 
-    private Bundle bundle;
-
     private GankCategoryContract.Presenter presenter;
 
-    private List<GankCategoryModel> items;
 
     private GankRvAdapter adapter;
 
     private int page = 1;
 
-    private ACache aCache;
+    /**
+     * 缓存管理器实例
+     */
+    private CacheManager<GankCategoryBean> cacheManager;
 
-    private Gson gson;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -77,74 +78,56 @@ public class GankExtraResourceFragment extends LazyFragment implements GankCateg
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.universal_list_card, container, false);
         ButterKnife.bind(this, view);
-        setupView();
         isPrepared = true;
-        lazyLoadData();
         return view;
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        bundle = outState;
-    }
-
-
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGankCategoryEvent(EventManager.GankCategory androidEvent) {
+    public void onGankCategoryEvent(EventManager.GankCategory event) {
 
 
-        if (androidEvent == EventManager.GankCategory.ERROR) {
+        if (event == EventManager.GankCategory.ERROR) {
 
-            int error_code = (int) androidEvent.getObject();
+            int error_code = (int) event.getObject();
             switch (error_code) {
 
-                case GankCategoryContract.NO_CATEGORY_CACHE:
-                    presenter.fetchCategory(GankHomeContract.EXTRA_RESOURCE, page + "");
+                case GankCategoryContract.NO_EXTRA_RESOURCE:
+                    MLog.i("NO_EXTRA_CATEGORY_CACHE");
+                    presenter.fetchCategory(GankApi.EXTRA_RESOURCE_CATEGORY_TYPE, page + "");
                     break;
             }
             return;
         }
 
 
-        if (!EventManager.GankCategory.EXTRA_RESOURCE.equals(androidEvent)) {
+        if (!EventManager.GankCategory.EXTRA_RESOURCE.equals(event)) {
             MLog.i("is not EXTRA_RESOURCE Event");
             return;
         }
         MLog.i("is  EXTRA_RESOURCE Event");
 
-        GankCategoryBean bean = (GankCategoryBean) androidEvent.getObject();
-//        ((GankAdapter)recyclerView.getAdapter()).setShowFooter(false);
-//        ((GankAdapter)recyclerView.getAdapter()).addItems(bean.getResults());
+        GankCategoryBean bean = (GankCategoryBean) event.getObject();
+        cacheManager.put(GankApi.EXTRA_RESOURCE_CATEGORY_TYPE, bean);
 
-        aCache.put("gank_category"+GankHomeContract.EXTRA_RESOURCE,gson.toJson(bean));
-
-        ((GankRvAdapter) recyclerView.getAdapter()).addData(bean.getResults());
-//        adapter.loadMoreComplete();
+        adapter.addData(bean.getResults());
     }
 
     @Override
     protected void setupView() {
 
-
         new GankCategoryPresenter(this);
 
-        aCache = ACache.get(MReaderApplication.getContext());
-
-        gson = new Gson();
-
+        cacheManager=new CacheManager<>(getActivity(), AppConfig.GANK_CACHE_NAME,GankCategoryBean.class);
         adapter = new GankRvAdapter(this, new ArrayList<GankCategoryModel>());
 
-        adapter.setEnableLoadMore(true);
-
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
+
+    }
+
+    @Override
+    protected void initListener() {
 
 
         //上拉刷新
@@ -155,8 +138,6 @@ public class GankExtraResourceFragment extends LazyFragment implements GankCateg
                 if (newState == RecyclerView.SCROLL_STATE_IDLE
                         && lastVisibleItemPosition + 1 == recyclerView.getAdapter().getItemCount()) {
 
-                    MLog.i("lastVisibleItemPosition:    " + lastVisibleItemPosition);
-                    MLog.i("rvZhihu.getAdapter().getItemCount() :" + recyclerView.getAdapter().getItemCount());
                     //加载更多
                     loadMore();
                 }
@@ -174,23 +155,17 @@ public class GankExtraResourceFragment extends LazyFragment implements GankCateg
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                presenter.fetchCategory(GankHomeContract.EXTRA_RESOURCE,page+"");
+                presenter.fetchCategory(GankApi.EXTRA_RESOURCE_CATEGORY_TYPE, 1 + "");
                 swipeRefresh.setRefreshing(false);
             }
         });
-
-
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-//        recyclerView.setAdapter(new GankAdapter(getActivity(), new ArrayList<GankCategoryModel>()));
-
     }
 
     private void loadMore() {
 
 
-        page++;
-        presenter.fetchCategory(GankHomeContract.EXTRA_RESOURCE, page + "");
+        page++;//查询下一页
+        presenter.fetchCategory(GankApi.EXTRA_RESOURCE_CATEGORY_TYPE, page + "");
 
         adapter.setLoading(false);
     }
@@ -205,10 +180,10 @@ public class GankExtraResourceFragment extends LazyFragment implements GankCateg
     @Override
     public void showError(String errorMsg) {
 
-        Snackbar.make(recyclerView, errorMsg, Snackbar.LENGTH_LONG).setAction("重试", new View.OnClickListener() {
+        Snackbar.make(recyclerView, errorMsg, Snackbar.LENGTH_LONG).setAction(getString(R.string.retry), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.fetchCategory(GankHomeContract.EXTRA_RESOURCE, page + "");
+                presenter.fetchCategory(GankApi.EXTRA_RESOURCE_CATEGORY_TYPE, page + "");
             }
         });
 
@@ -219,7 +194,7 @@ public class GankExtraResourceFragment extends LazyFragment implements GankCateg
         if (!isPrepared || !isVisible) {
             return;
         }
-        MLog.i("lazyLoadData\t" + this.getClass().getSimpleName() + "\t" + isVisible);
-        presenter.loadCategory(GankHomeContract.EXTRA_RESOURCE);
+        MLog.i("lazyLoadData\t"+this.getClass().getSimpleName());
+        presenter.loadCategory(GankApi.EXTRA_RESOURCE_CATEGORY_TYPE);
     }
 }

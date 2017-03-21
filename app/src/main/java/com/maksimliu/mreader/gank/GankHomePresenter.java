@@ -3,11 +3,12 @@ package com.maksimliu.mreader.gank;
 import com.google.gson.Gson;
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.api.GankApi;
-import com.maksimliu.mreader.bean.GankHomeBean;
-import com.maksimliu.mreader.db.model.GankHomeModel;
+import com.maksimliu.mreader.common.AppConfig;
+import com.maksimliu.mreader.entity.GankHomeBean;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.network.CacheInterceptor;
 import com.maksimliu.mreader.utils.ACache;
+import com.maksimliu.mreader.utils.CacheManager;
 import com.maksimliu.mreader.utils.DateUtil;
 import com.maksimliu.mreader.utils.MLog;
 
@@ -35,9 +36,8 @@ public class GankHomePresenter implements GankHomeContract.Presenter {
 
     private GankApi gankApi;
 
-    private ACache aCache;
 
-    private Gson gson;
+    private CacheManager<GankHomeBean> cacheManager;
 
 
     public GankHomePresenter(GankHomeContract.View view) {
@@ -45,9 +45,8 @@ public class GankHomePresenter implements GankHomeContract.Presenter {
         this.view = view;
         view.setPresenter(this);
 
-        gson = new Gson();
-        aCache = ACache.get(MReaderApplication.getContext());
 
+        cacheManager=new CacheManager<>(MReaderApplication.getContext(), AppConfig.GANK_CACHE_NAME,GankHomeBean.class);
 
         File cacheFile = new File(MReaderApplication.getContext().getExternalCacheDir(), "gank");
 
@@ -89,16 +88,15 @@ public class GankHomePresenter implements GankHomeContract.Presenter {
     public void loadLocalData() {
 
 
-        String detail = aCache.getAsString("gank_home" + DateUtil.getToday());
-        MLog.i(detail);
+       GankHomeBean homeBean=cacheManager.get(GankHomeContract.HOME+DateUtil.getToday());
 
-        if (detail != null) {
+
+        if (homeBean != null) {
 
             EventManager.GankHome event = EventManager.GankHome.GET_LATEST;
 
-            GankHomeBean gankHomeBean = gson.fromJson(detail, GankHomeBean.class);
 
-            event.setObject(gankHomeBean);
+            event.setObject(homeBean);
 
             EventBus.getDefault().postSticky(event);
         } else {

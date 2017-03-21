@@ -17,10 +17,12 @@ import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.api.GankApi;
 import com.maksimliu.mreader.base.LazyFragment;
-import com.maksimliu.mreader.bean.GankCategoryBean;
-import com.maksimliu.mreader.db.model.GankCategoryModel;
+import com.maksimliu.mreader.common.AppConfig;
+import com.maksimliu.mreader.entity.GankCategoryBean;
+import com.maksimliu.mreader.entity.GankCategoryModel;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.utils.ACache;
+import com.maksimliu.mreader.utils.CacheManager;
 import com.maksimliu.mreader.utils.MLog;
 import com.maksimliu.mreader.views.adapter.GankRvAdapter;
 
@@ -43,8 +45,7 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
     RecyclerView recyclerView;
     @BindView(R.id.swipeRefresh)
     SwipeRefreshLayout swipeRefresh;
-    @BindView(R.id.pb_gank)
-    ProgressBar pbGank;
+
 
     /**
      * 获取最后一个可见Item位置
@@ -52,20 +53,21 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
      */
     private int lastVisibleItemPosition;
 
-
-    private Bundle bundle;
-
     private GankCategoryContract.Presenter presenter;
-
-    private List<GankCategoryModel> items;
 
     private GankRvAdapter adapter;
 
+    /**
+     * 当前查询页数
+     */
     private int page = 1;
 
-    private ACache aCache;
+    /**
+     * 缓存管理器实例
+     */
+    private CacheManager<GankCategoryBean> cacheManager;
 
-    private Gson gson;
+
 
     public GankAndroidFragment() {
         // Required empty public constructor
@@ -78,17 +80,8 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.universal_list_card, container, false);
         ButterKnife.bind(this, view);
-        setupView();
         isPrepared = true;
-        lazyLoadData();
         return view;
-    }
-
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        bundle = outState;
     }
 
 
@@ -98,13 +91,12 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
 
         if (androidEvent == EventManager.GankCategory.ERROR) {
 
-            MLog.i("no cache");
             int error_code = (int) androidEvent.getObject();
             switch (error_code) {
 
-                case GankCategoryContract.NO_CATEGORY_CACHE:
-                    MLog.i("no cache");
-                    presenter.fetchCategory(GankHomeContract.ANDROID_CATEGORY, page + "");
+                case GankCategoryContract.NO_ANDROID_CACHE:
+                    MLog.i("NO_Android_CATEGORY_CACHE");
+                    presenter.fetchCategory(GankApi.ANDROID_CATEGORY_TYPE, page + "");
                     break;
             }
             return;
@@ -115,16 +107,14 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
             MLog.i("is not Android Event");
             return;
         }
+
         MLog.i("is  Android Event");
 
+
         GankCategoryBean bean = (GankCategoryBean) androidEvent.getObject();
-//        ((GankAdapter)recyclerView.getAdapter()).setShowFooter(false);
-//        ((GankAdapter)recyclerView.getAdapter()).addItems(bean.getResults());
+        cacheManager.put(GankApi.ANDROID_CATEGORY_TYPE,bean);
 
-
-        aCache.put("gank_category" + GankHomeContract.ANDROID_CATEGORY, gson.toJson(bean));
-        ((GankRvAdapter) recyclerView.getAdapter()).addData(bean.getResults());
-//        adapter.loadMoreComplete();
+        adapter.addData(bean.getResults());
     }
 
     @Override
@@ -133,16 +123,19 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
 
         new GankCategoryPresenter(this);
 
-        aCache = ACache.get(MReaderApplication.getContext());
-
-        gson = new Gson();
+        cacheManager=new CacheManager<>(getActivity(), AppConfig.GANK_CACHE_NAME,GankCategoryBean.class);
 
         adapter = new GankRvAdapter(this, new ArrayList<GankCategoryModel>());
 
         adapter.setEnableLoadMore(true);
 
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
+    }
 
+    @Override
+    protected void initListener() {
 
         //上拉刷新
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -152,8 +145,6 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
                 if (newState == RecyclerView.SCROLL_STATE_IDLE
                         && lastVisibleItemPosition + 1 == recyclerView.getAdapter().getItemCount()) {
 
-                    MLog.i("lastVisibleItemPosition:    " + lastVisibleItemPosition);
-                    MLog.i("rvZhihu.getAdapter().getItemCount() :" + recyclerView.getAdapter().getItemCount());
                     //加载更多
                     loadMore();
                 }
@@ -168,26 +159,23 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
             }
         });
 
+        //下拉刷新
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                presenter.fetchCategory(GankHomeContract.ANDROID_CATEGORY,page+"");
+                presenter.fetchCategory(GankApi.ANDROID_CATEGORY_TYPE,1+"");
                 swipeRefresh.setRefreshing(false);
             }
         });
-
-
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-//        recyclerView.setAdapter(new GankAdapter(getActivity(), new ArrayList<GankCategoryModel>()));
 
     }
 
     private void loadMore() {
 
+        MLog.i("loadMore");
+        page++;//查询下一页
 
-        page++;
-        presenter.fetchCategory(GankHomeContract.ANDROID_CATEGORY, page + "");
+        presenter.fetchCategory(GankApi.ANDROID_CATEGORY_TYPE, page + "");
 
         adapter.setLoading(false);
     }
@@ -202,10 +190,10 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
     @Override
     public void showError(String errorMsg) {
 
-        Snackbar.make(recyclerView, errorMsg, Snackbar.LENGTH_LONG).setAction("重试", new View.OnClickListener() {
+        Snackbar.make(recyclerView, errorMsg, Snackbar.LENGTH_LONG).setAction(getString(R.string.retry), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.fetchCategory(GankHomeContract.ANDROID_CATEGORY, page + "");
+                presenter.fetchCategory(GankApi.ANDROID_CATEGORY_TYPE, page + "");
             }
         });
 
@@ -213,11 +201,12 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
 
     @Override
     protected void lazyLoadData() {
-        MLog.i("lazyLoadData\t" + this.getClass().getSimpleName() + "\t" + isVisible);
+
         if (!isPrepared || !isVisible) {
             return;
         }
-        MLog.i("lazyLoadData\t" + this.getClass().getSimpleName());
+        MLog.i("lazyLoadData\t"+this.getClass().getSimpleName());
+        //加载本地最新数据
         presenter.loadCategory(GankApi.ANDROID_CATEGORY_TYPE);
 
 

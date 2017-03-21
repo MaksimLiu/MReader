@@ -17,10 +17,13 @@ import com.google.gson.Gson;
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.base.EventFragment;
-import com.maksimliu.mreader.bean.ZhiHuDailyNewsBean;
-import com.maksimliu.mreader.db.model.ZhiHuCommonNewsModel;
+import com.maksimliu.mreader.common.AppConfig;
+import com.maksimliu.mreader.entity.ZhiHuDailyNewsBean;
+import com.maksimliu.mreader.entity.ZhiHuCommonNewsModel;
 import com.maksimliu.mreader.event.EventManager;
+import com.maksimliu.mreader.gank.GankHomeContract;
 import com.maksimliu.mreader.utils.ACache;
+import com.maksimliu.mreader.utils.CacheManager;
 import com.maksimliu.mreader.utils.DateUtil;
 import com.maksimliu.mreader.utils.MLog;
 import com.maksimliu.mreader.utils.SpaceItemDecoration;
@@ -62,15 +65,14 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
 
     private Bundle bundle;
 
-    private ACache aCache;
+    private ZhiHuAdapter adapter;
 
-    private Gson gson;
+
+    private CacheManager<ZhiHuDailyNewsBean> cacheManager;
 
     public ZhiHuDailyHomeFragment() {
         // Required empty public constructor
     }
-
-
 
 
     @Override
@@ -89,7 +91,6 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
 
         View view = inflater.inflate(R.layout.fragment_zhi_hu_daily_home, container, false);
         ButterKnife.bind(this, view);
-        setupView();
         return view;
 
     }
@@ -141,15 +142,6 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
 
         MLog.i("onZhiHuDailyNewsEvent");
 
-//        if (event == EventManager.ZhiHuDailyNews.POST_NEWS_ID) {
-//
-//            MLog.i("POST_NEWS_ID");
-//            ZhiHuCommonNewsModel commonNewsModel = (ZhiHuCommonNewsModel) event.getObject();
-//            newsID = commonNewsModel.getId() + "";
-//            presenter.loadNewsDetail(newsID);
-//            return;
-//        }
-
         if (event == EventManager.ZhiHuDailyNews.ERROR) {
 
             int error_code = (int) event.getObject();
@@ -163,11 +155,7 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
                     MLog.i("NO_OLD_NEWS_CACHE");
                     presenter.fetchOldNews(DateFormat.format("yyyyMMdd", calendar).toString(), ZhiHuDailyContract.ADD_OLD_NEWS);
                     break;
-//                case ZhiHuDailyContract.NO_DETAIL_CACHE:
-//                    MLog.i("NO_DETAIL_CACHE");
-//                    MLog.i(newsID);
-//                    presenter.fetchNewsDetail(newsID);
-//                    break;
+//
             }
 
 
@@ -175,7 +163,7 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
 
         }
 
-        ZhiHuDailyNewsBean news = (ZhiHuDailyNewsBean) event.getObject();
+        ZhiHuDailyNewsBean bean = (ZhiHuDailyNewsBean) event.getObject();
 
         ZhiHuAdapter adapter = (ZhiHuAdapter) rvZhihu.getAdapter();
 
@@ -185,23 +173,23 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
             MLog.i("GET_LATEST");
 
 
-            adapter.resetItems(news.getCommonNewsModels());
+            adapter.resetItems(bean.getCommonNewsModels());
 
-            aCache.put("zhihu_daily_news" + DateUtil.getToday(), gson.toJson(news));
 
+            cacheManager.put(GankHomeContract.HOME+DateUtil.getToday(),bean);
             calendar = Calendar.getInstance();//时间重置回今天
 
         } else if (event == EventManager.ZhiHuDailyNews.ADD_OLD_NEWS) {
 
             MLog.i("ADD_OLD_NEWS");
 
-            aCache.put("zhihu_daily_news" + DateUtil.getCurrentDate(calendar), gson.toJson(news));
-            adapter.addItems(news.getCommonNewsModels());
+            cacheManager.put(GankHomeContract.HOME+DateUtil.getCurrentDate(calendar),bean);
+            adapter.addItems(bean.getCommonNewsModels());
 
         } else if (event == EventManager.ZhiHuDailyNews.SET_OLD_NEWS) {
             MLog.i("SET_OLD_NEWS");
 
-            adapter.resetItems(news.getCommonNewsModels());
+            adapter.resetItems(bean.getCommonNewsModels());
             MLog.i("mYear:   " + mYear + "\n" + "mMonth:  " + mMonth + "\n" + "mDay: " + mDay);
             calendar.set(mYear, mMonth, mDay);//时间重置当前选择的时间
         }
@@ -264,14 +252,13 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
     }
 
     @Override
-    protected void setupView() {
+    public void setupView() {
 
 
         getActivity().findViewById(R.id.tab).setVisibility(View.GONE);
+        adapter = new ZhiHuAdapter(getActivity(), new ArrayList<ZhiHuCommonNewsModel>());
 
-        aCache = ACache.get(MReaderApplication.getContext());
-
-        gson = new Gson();
+        cacheManager = new CacheManager<>(getActivity(), AppConfig.ZHIHU_CACHE_NAME, ZhiHuDailyNewsBean.class);
 
         new ZhiHuDailyPresenter(this);
 
@@ -281,12 +268,15 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
         //给RecyclerView item设置间距
         int space = getResources().getDimensionPixelOffset(R.dimen.card_spacing);
         rvZhihu.addItemDecoration(new SpaceItemDecoration(space));
-
-
         rvZhihu.setHasFixedSize(true);
-
         rvZhihu.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvZhihu.setAdapter(new ZhiHuAdapter(getActivity(), new ArrayList<ZhiHuCommonNewsModel>()));
+        rvZhihu.setAdapter(adapter);
+
+
+    }
+
+    @Override
+    public void initListener() {
 
 
         //下拉刷新
@@ -321,7 +311,6 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
 
             }
         });
-
 
     }
 }
