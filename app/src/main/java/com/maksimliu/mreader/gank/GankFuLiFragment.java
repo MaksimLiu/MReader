@@ -72,13 +72,18 @@ public class GankFuLiFragment extends LazyFragment implements GankCategoryContra
     }
 
 
+    /**
+     * 注意：错误事件必须要在判断是否为符合自身事件之前，
+     * 否则当加载不了本地数据，发布错误事件时接受不到信息，从而无法执行错误处理即从网络中获取数据
+     * @param event
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGankCategoryEvent(EventManager.GankCategory androidEvent) {
+    public void onGankCategoryEvent(EventManager.GankCategory event) {
 
 
-        if (androidEvent == EventManager.GankCategory.ERROR) {
+        if (event == EventManager.GankCategory.ERROR) {
 
-            int error_code = (int) androidEvent.getObject();
+            int error_code = (int) event.getObject();
             switch (error_code) {
 
                 case GankCategoryContract.NO_FULI_CACHE:
@@ -91,13 +96,13 @@ public class GankFuLiFragment extends LazyFragment implements GankCategoryContra
         }
 
 
-        if (!EventManager.GankCategory.FULI.equals(androidEvent)) {
+        if (!EventManager.GankCategory.FULI.equals(event)) {
             MLog.i("is not FULI Event");
             return;
         }
         MLog.i("is  FULI Event");
 
-        GankCategoryBean bean = (GankCategoryBean) androidEvent.getObject();
+        GankCategoryBean bean = (GankCategoryBean) event.getObject();
 
         cacheManager.put(GankApi.FULI_CATEGORY_TYPE, bean);
         adapter.addData(bean.getResults());
@@ -144,7 +149,7 @@ public class GankFuLiFragment extends LazyFragment implements GankCategoryContra
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                presenter.fetchCategory(GankHomeContract.FULI_CATEGORY, 1 + "");
+                presenter.fetchCategory(GankApi.FULI_CATEGORY_TYPE, 1 + "");
                 swipeRefresh.setRefreshing(false);
             }
         });
@@ -183,7 +188,6 @@ public class GankFuLiFragment extends LazyFragment implements GankCategoryContra
         if (!isPrepared || !isVisible) {
             return;
         }
-        MLog.i("lazyLoadData\t"+this.getClass().getSimpleName());
         presenter.loadCategory(GankApi.FULI_CATEGORY_TYPE);
     }
 }

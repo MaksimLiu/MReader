@@ -85,13 +85,18 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
     }
 
 
+    /**
+     * 注意：错误事件必须要在判断是否为符合自身事件之前，
+     * 否则当加载不了本地数据，发布错误事件时接受不到信息，从而无法执行错误处理即从网络中获取数据
+     * @param event
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGankCategoryEvent(EventManager.GankCategory androidEvent) {
+    public void onGankCategoryEvent(EventManager.GankCategory event) {
 
 
-        if (androidEvent == EventManager.GankCategory.ERROR) {
+        if (event == EventManager.GankCategory.ERROR) {
 
-            int error_code = (int) androidEvent.getObject();
+            int error_code = (int) event.getObject();
             switch (error_code) {
 
                 case GankCategoryContract.NO_ANDROID_CACHE:
@@ -103,7 +108,7 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
         }
 
 
-        if (!EventManager.GankCategory.ANDROID.equals(androidEvent)) {
+        if (!EventManager.GankCategory.ANDROID.equals(event)) {
             MLog.i("is not Android Event");
             return;
         }
@@ -111,7 +116,7 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
         MLog.i("is  Android Event");
 
 
-        GankCategoryBean bean = (GankCategoryBean) androidEvent.getObject();
+        GankCategoryBean bean = (GankCategoryBean) event.getObject();
         cacheManager.put(GankApi.ANDROID_CATEGORY_TYPE,bean);
 
         adapter.addData(bean.getResults());
@@ -205,7 +210,6 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
         if (!isPrepared || !isVisible) {
             return;
         }
-        MLog.i("lazyLoadData\t"+this.getClass().getSimpleName());
         //加载本地最新数据
         presenter.loadCategory(GankApi.ANDROID_CATEGORY_TYPE);
 

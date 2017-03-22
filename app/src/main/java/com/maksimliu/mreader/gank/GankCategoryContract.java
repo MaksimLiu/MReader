@@ -25,8 +25,9 @@ public interface GankCategoryContract {
 
         void loadCategory(String category);
 
-
         void fetchCategory(String category, String page);
+
+        void filterCategoryEvent(String category);
 
 
     }

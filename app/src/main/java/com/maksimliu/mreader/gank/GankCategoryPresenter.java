@@ -34,13 +34,18 @@ public class GankCategoryPresenter implements GankCategoryContract.Presenter {
 
     private CacheManager<GankCategoryBean> cacheManager;
 
+    private EventManager.GankCategory categoryEvent;
+
+    private int eventType;
+
+
     public GankCategoryPresenter(GankCategoryContract.View view) {
 
 
         this.view = view;
         view.setPresenter(this);
 
-        cacheManager = new CacheManager<>(MReaderApplication.getContext(), AppConfig.GANK_CACHE_NAME,GankCategoryBean.class);
+        cacheManager = new CacheManager<>(MReaderApplication.getContext(), AppConfig.GANK_CACHE_NAME, GankCategoryBean.class);
 
         File cacheFile = new File(MReaderApplication.getContext().getExternalCacheDir(), "gank");
 
@@ -77,45 +82,14 @@ public class GankCategoryPresenter implements GankCategoryContract.Presenter {
     @Override
     public void loadCategory(String category) {
 
-        final EventManager.GankCategory gankCategory;
-
-        int eventType;
-
-        switch (category) {
-
-            case GankApi.ANDROID_CATEGORY_TYPE:
-                gankCategory = EventManager.GankCategory.ANDROID;
-                eventType = GankCategoryContract.NO_ANDROID_CACHE;
-                break;
-            case GankApi.IOS_CATEGORY_TYPE:
-                gankCategory = EventManager.GankCategory.IOS;
-                eventType = GankCategoryContract.NO_IOS_CACHE;
-                break;
-            case GankApi.FRONT_END_CATEGORY_TYPE:
-                gankCategory = EventManager.GankCategory.FRONT_END;
-                eventType = GankCategoryContract.NO_FRONT_END_CACHE;
-                break;
-            case GankApi.OTHERS_CATEGORY_TYPE:
-                gankCategory = EventManager.GankCategory.OTHERS;
-                eventType = GankCategoryContract.NO_OTHERS_CACHE;
-                break;
-            case GankApi.FULI_CATEGORY_TYPE:
-                gankCategory = EventManager.GankCategory.FULI;
-                eventType = GankCategoryContract.NO_FULI_CACHE;
-                break;
-            default:
-                gankCategory = EventManager.GankCategory.EXTRA_RESOURCE;
-                eventType = GankCategoryContract.NO_EXTRA_RESOURCE;
-                break;
-        }
-
+        filterCategoryEvent(category);
 
         GankCategoryBean bean = cacheManager.get(category);
 
         if (bean != null) {
 
-            gankCategory.setObject(bean);
-            EventBus.getDefault().post(gankCategory);
+            categoryEvent.setObject(bean);
+            EventBus.getDefault().post(categoryEvent);
         } else {
 
             EventManager.GankCategory event = EventManager.GankCategory.ERROR;
@@ -132,40 +106,18 @@ public class GankCategoryPresenter implements GankCategoryContract.Presenter {
     @Override
     public void fetchCategory(String category, String page) {
 
-
-        final EventManager.GankCategory gankCategory;
+        filterCategoryEvent(category);
 
         Call<GankCategoryBean> call = gankApi.getCategoryGank(category, page);
 
-        switch (category) {
-
-            case GankApi.ANDROID_CATEGORY_TYPE:
-                gankCategory = EventManager.GankCategory.ANDROID;
-                break;
-            case GankApi.IOS_CATEGORY_TYPE:
-                gankCategory = EventManager.GankCategory.IOS;
-                break;
-            case GankApi.FRONT_END_CATEGORY_TYPE:
-                gankCategory = EventManager.GankCategory.FRONT_END;
-                break;
-            case GankApi.OTHERS_CATEGORY_TYPE:
-                gankCategory = EventManager.GankCategory.OTHERS;
-                break;
-            case GankApi.FULI_CATEGORY_TYPE:
-                gankCategory = EventManager.GankCategory.FULI;
-                break;
-            default:
-                gankCategory = EventManager.GankCategory.EXTRA_RESOURCE;
-                break;
-        }
 
         call.enqueue(new Callback<GankCategoryBean>() {
             @Override
             public void onResponse(Call<GankCategoryBean> call, Response<GankCategoryBean> response) {
 
 
-                gankCategory.setObject(response.body());
-                EventBus.getDefault().post(gankCategory);
+                categoryEvent.setObject(response.body());
+                EventBus.getDefault().post(categoryEvent);
 
             }
 
@@ -175,5 +127,37 @@ public class GankCategoryPresenter implements GankCategoryContract.Presenter {
                 view.showError("加载失败");
             }
         });
+    }
+
+    @Override
+    public void filterCategoryEvent(String category) {
+
+        switch (category) {
+
+            case GankApi.ANDROID_CATEGORY_TYPE:
+                categoryEvent = EventManager.GankCategory.ANDROID;
+                eventType = GankCategoryContract.NO_ANDROID_CACHE;
+                break;
+            case GankApi.IOS_CATEGORY_TYPE:
+                categoryEvent = EventManager.GankCategory.IOS;
+                eventType = GankCategoryContract.NO_IOS_CACHE;
+                break;
+            case GankApi.FRONT_END_CATEGORY_TYPE:
+                categoryEvent = EventManager.GankCategory.FRONT_END;
+                eventType = GankCategoryContract.NO_FRONT_END_CACHE;
+                break;
+            case GankApi.OTHERS_CATEGORY_TYPE:
+                categoryEvent = EventManager.GankCategory.OTHERS;
+                eventType = GankCategoryContract.NO_OTHERS_CACHE;
+                break;
+            case GankApi.FULI_CATEGORY_TYPE:
+                categoryEvent = EventManager.GankCategory.FULI;
+                eventType = GankCategoryContract.NO_FULI_CACHE;
+                break;
+            default:
+                categoryEvent = EventManager.GankCategory.EXTRA_RESOURCE;
+                eventType = GankCategoryContract.NO_EXTRA_RESOURCE;
+                break;
+        }
     }
 }

@@ -83,6 +83,12 @@ public class GankOthersFragment extends LazyFragment implements GankCategoryCont
         return view;
     }
 
+    /**
+     * 注意：错误事件必须要在判断是否为符合自身事件之前，
+     * 否则当加载不了本地数据，发布错误事件时接受不到信息，从而无法执行错误处理即从网络中获取数据
+     *
+     * @param event
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGankCategoryEvent(EventManager.GankCategory event) {
 
@@ -93,7 +99,7 @@ public class GankOthersFragment extends LazyFragment implements GankCategoryCont
             switch (error_code) {
 
                 case GankCategoryContract.NO_OTHERS_CACHE:
-                    presenter.fetchCategory(GankHomeContract.OTHERS_CATEGORY, page + "");
+                    presenter.fetchCategory(GankApi.OTHERS_CATEGORY_TYPE, page + "");
                     break;
             }
             return;
@@ -116,7 +122,7 @@ public class GankOthersFragment extends LazyFragment implements GankCategoryCont
 
         new GankCategoryPresenter(this);
 
-        cacheManager=new CacheManager<>(getActivity(), AppConfig.GANK_CACHE_NAME,GankCategoryBean.class);
+        cacheManager = new CacheManager<>(getActivity(), AppConfig.GANK_CACHE_NAME, GankCategoryBean.class);
         adapter = new GankRvAdapter(this, new ArrayList<GankCategoryModel>());
 
         recyclerView.setAdapter(adapter);
@@ -161,7 +167,6 @@ public class GankOthersFragment extends LazyFragment implements GankCategoryCont
     private void loadMore() {
 
 
-
         page++; //查询下一页
         presenter.fetchCategory(GankApi.OTHERS_CATEGORY_TYPE, page + "");
 
@@ -192,7 +197,6 @@ public class GankOthersFragment extends LazyFragment implements GankCategoryCont
         if (!isPrepared || !isVisible) {
             return;
         }
-        MLog.i("lazyLoadData\t"+this.getClass().getSimpleName());
         presenter.loadCategory(GankApi.OTHERS_CATEGORY_TYPE);
     }
 }

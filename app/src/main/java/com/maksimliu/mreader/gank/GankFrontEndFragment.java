@@ -83,13 +83,18 @@ public class GankFrontEndFragment extends LazyFragment implements GankCategoryCo
     }
 
 
+    /**
+     * 注意：错误事件必须要在判断是否为符合自身事件之前，
+     * 否则当加载不了本地数据，发布错误事件时接受不到信息，从而无法执行错误处理即从网络中获取数据
+     * @param event
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGankCategoryEvent(EventManager.GankCategory androidEvent) {
+    public void onGankCategoryEvent(EventManager.GankCategory event) {
 
 
-        if (androidEvent == EventManager.GankCategory.ERROR) {
+        if (event == EventManager.GankCategory.ERROR) {
 
-            int error_code = (int) androidEvent.getObject();
+            int error_code = (int) event.getObject();
             switch (error_code) {
 
                 case GankCategoryContract.NO_FRONT_END_CACHE:
@@ -100,15 +105,15 @@ public class GankFrontEndFragment extends LazyFragment implements GankCategoryCo
             return;
         }
 
-        if (!EventManager.GankCategory.FRONT_END.equals(androidEvent)) {
+        if (!EventManager.GankCategory.FRONT_END.equals(event)) {
             MLog.i("is not FRONT_END Event");
             return;
         }
         MLog.i("is  FRONT_END Event");
 
-        GankCategoryBean bean = (GankCategoryBean) androidEvent.getObject();
+        GankCategoryBean bean = (GankCategoryBean) event.getObject();
 
-        cacheManager.put(GankApi.ANDROID_CATEGORY_TYPE, bean);
+        cacheManager.put(GankApi.FRONT_END_CATEGORY_TYPE, bean);
         adapter.addData(bean.getResults());
     }
 
@@ -165,7 +170,7 @@ public class GankFrontEndFragment extends LazyFragment implements GankCategoryCo
 
 
         page++; //查询下一页
-        presenter.fetchCategory(GankHomeContract.FRONT_END_CATEGORY, page + "");
+        presenter.fetchCategory(GankApi.FRONT_END_CATEGORY_TYPE, page + "");
 
         adapter.setLoading(false);
     }
@@ -194,7 +199,6 @@ public class GankFrontEndFragment extends LazyFragment implements GankCategoryCo
         if (!isPrepared || !isVisible) {
             return;
         }
-        MLog.i("lazyLoadData\t"+this.getClass().getSimpleName());
         presenter.loadCategory(GankApi.FRONT_END_CATEGORY_TYPE);
     }
 }

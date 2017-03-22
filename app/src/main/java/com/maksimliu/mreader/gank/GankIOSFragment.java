@@ -83,6 +83,11 @@ public class GankIOSFragment extends LazyFragment implements GankCategoryContrac
     }
 
 
+    /**
+     * 注意：错误事件必须要在判断是否为符合自身事件之前，
+     * 否则当加载不了本地数据，发布错误事件时接受不到信息，从而无法执行错误处理即从网络中获取数据
+     * @param event
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGankCategoryEvent(EventManager.GankCategory event) {
 
@@ -159,7 +164,7 @@ public class GankIOSFragment extends LazyFragment implements GankCategoryContrac
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                presenter.fetchCategory(GankHomeContract.IOS_CATEGORY, 1 + "");
+                presenter.fetchCategory(GankApi.IOS_CATEGORY_TYPE, 1 + "");
                 swipeRefresh.setRefreshing(false);
             }
         });
@@ -198,7 +203,6 @@ public class GankIOSFragment extends LazyFragment implements GankCategoryContrac
         if (!isPrepared || !isVisible) {
             return;
         }
-        MLog.i("lazyLoadData\t"+this.getClass().getSimpleName());
         presenter.loadCategory(GankApi.IOS_CATEGORY_TYPE);
 
     }

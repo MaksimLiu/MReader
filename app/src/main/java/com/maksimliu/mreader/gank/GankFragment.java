@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class GankFragment extends BaseFragment implements BaseView{
+public class GankFragment extends BaseFragment{
 
 
     @BindView(R.id.vp_gank)
@@ -40,20 +40,9 @@ public class GankFragment extends BaseFragment implements BaseView{
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_gank, container, false);
         ButterKnife.bind(this, view);
-        setupView();
         return view;
     }
 
-
-    @Override
-    public void setPresenter(Object presnter) {
-
-    }
-
-    @Override
-    public void showError(String errorMsg) {
-
-    }
 
     @Override
     public void setupView() {
