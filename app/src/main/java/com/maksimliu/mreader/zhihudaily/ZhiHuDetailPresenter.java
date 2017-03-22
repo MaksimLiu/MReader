@@ -1,26 +1,20 @@
 package com.maksimliu.mreader.zhihudaily;
 
-import com.google.gson.Gson;
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.api.ZhiHuDailyApi;
+import com.maksimliu.mreader.common.AppConfig;
 import com.maksimliu.mreader.entity.ZhiHuDetailBean;
 import com.maksimliu.mreader.event.EventManager;
-import com.maksimliu.mreader.network.CacheInterceptor;
-import com.maksimliu.mreader.utils.ACache;
+import com.maksimliu.mreader.network.RetrofitHelper;
+import com.maksimliu.mreader.utils.CacheManager;
 import com.maksimliu.mreader.utils.MLog;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.File;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by MaksimLiu on 2017/3/19.
@@ -31,37 +25,20 @@ public class ZhiHuDetailPresenter implements ZhiHuDetailContract.Presenter {
 
     private ZhiHuDetailContract.View view;
 
-    private ACache aCache;
-
-    private Gson gson;
-
     private ZhiHuDailyApi zhiHuDailyApi;
+
+    private CacheManager<ZhiHuDetailBean> cacheManager;
+
 
     public ZhiHuDetailPresenter(ZhiHuDetailContract.View view) {
 
         this.view = view;
         view.setPresenter(this);
-        File cacheFile = new File(MReaderApplication.getContext().getExternalCacheDir(), "zhihu_daily");
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(8, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
-                .writeTimeout(5, TimeUnit.SECONDS)
-                .addNetworkInterceptor(new CacheInterceptor())
-                .cache(new Cache(cacheFile, 1024 * 1024 * 10)) //10M缓存空间
-                .build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(okHttpClient)
-                .baseUrl(ZhiHuDailyApi.BASE_API_4_URL)
-                .build();
-
-        aCache = ACache.get(MReaderApplication.getContext());
-
-        gson = new Gson();
-
+        Retrofit retrofit = RetrofitHelper.create(ZhiHuDailyApi.BASE_API_4_URL);
         zhiHuDailyApi = retrofit.create(ZhiHuDailyApi.class);
+
+        cacheManager = new CacheManager<>(MReaderApplication.getContext(), AppConfig.ZHIHU_CACHE_NAME, ZhiHuDetailBean.class);
 
     }
 
@@ -86,10 +63,8 @@ public class ZhiHuDetailPresenter implements ZhiHuDetailContract.Presenter {
             @Override
             public void onResponse(Call<ZhiHuDetailBean> call, Response<ZhiHuDetailBean> response) {
 
-                MLog.i(event.getClass().getSimpleName());
                 event.setObject(response.body());
                 EventBus.getDefault().post(event);
-
             }
 
             @Override
@@ -106,17 +81,13 @@ public class ZhiHuDetailPresenter implements ZhiHuDetailContract.Presenter {
     public void loadNewsDetail(String id) {
         MLog.i("loadNewsDetail");
 
-        String detail = aCache.getAsString("zhihu_detail" + id);
-        if (detail != null) {
+        ZhiHuDetailBean bean = cacheManager.get(ZhiHuDetailContract.ZHIHU_DETAIL_NEWS + id);
+        if (bean != null) {
 
-            final EventManager.ZhiHuNewsDetail detailEvent = EventManager.ZhiHuNewsDetail.GET_DETAIL;
-
-            MLog.i(detail);
-            ZhiHuDetailBean detailBean = gson.fromJson(detail, ZhiHuDetailBean.class);
-
-//          --  MLog.i(detailEvent.getClass().getSimpleName());
-            detailEvent.setObject(detailBean);
+            EventManager.ZhiHuNewsDetail detailEvent = EventManager.ZhiHuNewsDetail.GET_DETAIL;
+            detailEvent.setObject(bean);
             EventBus.getDefault().post(detailEvent);
+
         } else {
 
             MLog.i("Error");

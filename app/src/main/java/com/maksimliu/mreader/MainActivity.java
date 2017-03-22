@@ -13,10 +13,10 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.maksimliu.mreader.base.EventActivity;
-import com.maksimliu.mreader.entity.ZhiHuDailyNewsBean;
+import com.maksimliu.mreader.entity.ZhiHuNewsBean;
 import com.maksimliu.mreader.gank.GankFragment;
 import com.maksimliu.mreader.utils.FragmentUtil;
-import com.maksimliu.mreader.zhihudaily.ZhiHuDailyHomeFragment;
+import com.maksimliu.mreader.zhihudaily.ZhiHuHomeFragment;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -27,7 +27,7 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
     private Toolbar toolbar;
 
 
-    private ZhiHuDailyHomeFragment zhiHuDailyHomeFragment;
+    private ZhiHuHomeFragment zhiHuDailyHomeFragment;
 
     private GankFragment gankFragment;
 
@@ -59,7 +59,7 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
 
     private void initFragment() {
 
-        zhiHuDailyHomeFragment = new ZhiHuDailyHomeFragment();
+        zhiHuDailyHomeFragment = new ZhiHuHomeFragment();
         gankFragment=new GankFragment();
 
     }
@@ -133,7 +133,7 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMainEvent(ZhiHuDailyNewsBean latest) {
+    public void onMainEvent(ZhiHuNewsBean latest) {
 
     }
 }

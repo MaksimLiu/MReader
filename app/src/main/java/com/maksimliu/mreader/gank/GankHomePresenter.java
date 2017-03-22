@@ -7,6 +7,7 @@ import com.maksimliu.mreader.common.AppConfig;
 import com.maksimliu.mreader.entity.GankHomeBean;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.network.CacheInterceptor;
+import com.maksimliu.mreader.network.RetrofitHelper;
 import com.maksimliu.mreader.utils.ACache;
 import com.maksimliu.mreader.utils.CacheManager;
 import com.maksimliu.mreader.utils.DateUtil;
@@ -46,23 +47,10 @@ public class GankHomePresenter implements GankHomeContract.Presenter {
         view.setPresenter(this);
 
 
-        cacheManager=new CacheManager<>(MReaderApplication.getContext(), AppConfig.GANK_CACHE_NAME,GankHomeBean.class);
+        cacheManager = new CacheManager<>(MReaderApplication.getContext(), AppConfig.GANK_CACHE_NAME, GankHomeBean.class);
 
-        File cacheFile = new File(MReaderApplication.getContext().getExternalCacheDir(), "gank");
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(8, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
-                .writeTimeout(5, TimeUnit.SECONDS)
-                .addNetworkInterceptor(new CacheInterceptor())
-                .cache(new Cache(cacheFile, 1024 * 1024 * 10)) //10M缓存空间
-                .build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(okHttpClient)
-                .baseUrl(GankApi.BASE_API_URL)
-                .build();
+        Retrofit retrofit = RetrofitHelper.create(GankApi.BASE_API_URL);
 
         gankApi = retrofit.create(GankApi.class);
     }
@@ -88,7 +76,7 @@ public class GankHomePresenter implements GankHomeContract.Presenter {
     public void loadLocalData() {
 
 
-       GankHomeBean homeBean=cacheManager.get(GankHomeContract.HOME+DateUtil.getToday());
+        GankHomeBean homeBean = cacheManager.get(GankHomeContract.HOME + DateUtil.getToday());
 
 
         if (homeBean != null) {

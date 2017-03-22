@@ -9,7 +9,7 @@ import java.util.List;
  * Created by MaksimLiu on 2017/3/4.
  */
 
-public class ZhiHuDailyNewsBean implements Serializable{
+public class ZhiHuNewsBean implements Serializable{
 
 
     /**

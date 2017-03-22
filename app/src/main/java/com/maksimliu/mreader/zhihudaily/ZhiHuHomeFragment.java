@@ -13,21 +13,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.Gson;
-import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.base.EventFragment;
 import com.maksimliu.mreader.common.AppConfig;
-import com.maksimliu.mreader.entity.ZhiHuDailyNewsBean;
+import com.maksimliu.mreader.entity.ZhiHuNewsBean;
 import com.maksimliu.mreader.entity.ZhiHuCommonNewsModel;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.gank.GankHomeContract;
-import com.maksimliu.mreader.utils.ACache;
 import com.maksimliu.mreader.utils.CacheManager;
 import com.maksimliu.mreader.utils.DateUtil;
 import com.maksimliu.mreader.utils.MLog;
 import com.maksimliu.mreader.utils.SpaceItemDecoration;
-import com.maksimliu.mreader.views.adapter.ZhiHuAdapter;
+import com.maksimliu.mreader.views.adapter.ZhiHuRvAdapter;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -44,7 +41,7 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyContract.View {
+public class ZhiHuHomeFragment extends EventFragment implements ZhiHuHomeContract.View {
 
 
     @BindView(R.id.rv_zhihu)
@@ -60,17 +57,17 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
     private int lastVisibleItemPosition;
 
 
-    private ZhiHuDailyContract.Presenter presenter;
+    private ZhiHuHomeContract.Presenter presenter;
 
 
     private Bundle bundle;
 
-    private ZhiHuAdapter adapter;
+    private ZhiHuRvAdapter adapter;
 
 
-    private CacheManager<ZhiHuDailyNewsBean> cacheManager;
+    private CacheManager<ZhiHuNewsBean> cacheManager;
 
-    public ZhiHuDailyHomeFragment() {
+    public ZhiHuHomeFragment() {
         // Required empty public constructor
     }
 
@@ -115,22 +112,19 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
         //每次请求在当前日期减一天
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         presenter.loadOldNews(calendar);
-        ((ZhiHuAdapter) rvZhihu.getAdapter()).setLoading(false);
+        adapter.setLoading(false);
 
-        MLog.i("isLoading" + ((ZhiHuAdapter) rvZhihu.getAdapter()).isLoading());
     }
 
 
     @Override
-    public void setPresenter(ZhiHuDailyContract.Presenter presenter) {
+    public void setPresenter(ZhiHuHomeContract.Presenter presenter) {
 
 
         this.presenter = presenter;
 
 
     }
-
-    private String newsID;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onZhiHuDailyNewsEvent(EventManager.ZhiHuDailyNews event) {
@@ -147,15 +141,14 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
             int error_code = (int) event.getObject();
             switch (error_code) {
 
-                case ZhiHuDailyContract.NO_LATEST_NEWS_CACHE:
+                case ZhiHuHomeContract.NO_LATEST_NEWS_CACHE:
 
                     presenter.fetchLatestNews();
                     break;
-                case ZhiHuDailyContract.NO_OLD_NEWS_CACHE:
+                case ZhiHuHomeContract.NO_OLD_NEWS_CACHE:
                     MLog.i("NO_OLD_NEWS_CACHE");
-                    presenter.fetchOldNews(DateFormat.format("yyyyMMdd", calendar).toString(), ZhiHuDailyContract.ADD_OLD_NEWS);
+                    presenter.fetchOldNews(DateFormat.format("yyyyMMdd", calendar).toString(), ZhiHuHomeContract.ADD_OLD_NEWS);
                     break;
-//
             }
 
 
@@ -163,9 +156,7 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
 
         }
 
-        ZhiHuDailyNewsBean bean = (ZhiHuDailyNewsBean) event.getObject();
-
-        ZhiHuAdapter adapter = (ZhiHuAdapter) rvZhihu.getAdapter();
+        ZhiHuNewsBean bean = (ZhiHuNewsBean) event.getObject();
 
         if (event == EventManager.ZhiHuDailyNews.GET_LATEST) {
 
@@ -173,7 +164,7 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
             MLog.i("GET_LATEST");
 
 
-            adapter.resetItems(bean.getCommonNewsModels());
+            adapter.addData(bean.getCommonNewsModels());
 
 
             cacheManager.put(GankHomeContract.HOME+DateUtil.getToday(),bean);
@@ -184,12 +175,12 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
             MLog.i("ADD_OLD_NEWS");
 
             cacheManager.put(GankHomeContract.HOME+DateUtil.getCurrentDate(calendar),bean);
-            adapter.addItems(bean.getCommonNewsModels());
+            adapter.addData(bean.getCommonNewsModels());
 
         } else if (event == EventManager.ZhiHuDailyNews.SET_OLD_NEWS) {
             MLog.i("SET_OLD_NEWS");
 
-            adapter.resetItems(bean.getCommonNewsModels());
+            adapter.setNewData(bean.getCommonNewsModels());
             MLog.i("mYear:   " + mYear + "\n" + "mMonth:  " + mMonth + "\n" + "mDay: " + mDay);
             calendar.set(mYear, mMonth, mDay);//时间重置当前选择的时间
         }
@@ -222,7 +213,7 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
                 mDay = dayOfMonth;
                 mMonth = monthOfYear;
 
-                presenter.fetchOldNews(DateUtil.convertDateForZhiHuApi(year, monthOfYear, dayOfMonth), ZhiHuDailyContract.SET_OLD_NEWS);
+                presenter.fetchOldNews(DateUtil.convertDateForZhiHuApi(year, monthOfYear, dayOfMonth), ZhiHuHomeContract.SET_OLD_NEWS);
 
             }
         }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
@@ -254,13 +245,12 @@ public class ZhiHuDailyHomeFragment extends EventFragment implements ZhiHuDailyC
     @Override
     public void setupView() {
 
+        new ZhiHuHomePresenter(this);
 
         getActivity().findViewById(R.id.tab).setVisibility(View.GONE);
-        adapter = new ZhiHuAdapter(getActivity(), new ArrayList<ZhiHuCommonNewsModel>());
+        adapter =new ZhiHuRvAdapter(getActivity(),new ArrayList<ZhiHuCommonNewsModel>());
 
-        cacheManager = new CacheManager<>(getActivity(), AppConfig.ZHIHU_CACHE_NAME, ZhiHuDailyNewsBean.class);
-
-        new ZhiHuDailyPresenter(this);
+        cacheManager = new CacheManager<>(getActivity(), AppConfig.ZHIHU_CACHE_NAME, ZhiHuNewsBean.class);
 
         //获取当前时间
         calendar = Calendar.getInstance();

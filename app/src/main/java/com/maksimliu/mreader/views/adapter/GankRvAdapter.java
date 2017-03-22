@@ -25,10 +25,6 @@ public class GankRvAdapter extends BaseMultiItemQuickAdapter<GankCategoryModel, 
 
     private Context context;
 
-    private static final int TEXT_VIEW_TYPE = 1;
-    private static final int IMAGE_TEXT_VIEW_TYPE = 2;
-    private static final int IMAGE_VIEW_TYPE = 3;
-    private static final int FOOT_LOADER_VIEW_TYPE = 4;
 
     private boolean isLoader;
 

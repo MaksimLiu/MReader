@@ -111,6 +111,8 @@ public class GankHomeFragment extends LazyFragment implements GankHomeContract.V
                     presenter.fetchGankDaily(year, month, day);
                     break;
             }
+
+            return;
         }
 
         GankHomeBean gankBean = (GankHomeBean) gankEvent.getObject();
@@ -136,28 +138,11 @@ public class GankHomeFragment extends LazyFragment implements GankHomeContract.V
 
         cacheManager.put(GankHomeContract.HOME + year + "-" + month + "-" + day, gankBean);
 
-        showHtml(gankDailyModel);
+        showHTML(gankDailyModel.getContent().replaceAll("<img(.*)/>", ""));
 
     }
 
-    private void showHtml(GankHomeModel gankDailyModel) {
 
-
-        //补充完整HTML代码
-        StringBuilder html = new StringBuilder();
-
-        //去除<img />标签
-        String body = gankDailyModel.getContent().replaceAll("<img(.*)/>", "");
-
-        html.append("<!DOCTYPE HTML>\n")
-                .append("<html>\n<head>\n <meta charset=\"utf-8\" />\n")
-                .append("\n</head>\n<body")
-                .append(body)
-                .append("</body>\n<html>");
-
-
-        wvGank.loadDataWithBaseURL("", html.toString(), "text/html;UTF-8", null, null);
-    }
 
 
     @Override
@@ -167,6 +152,7 @@ public class GankHomeFragment extends LazyFragment implements GankHomeContract.V
         new GankHomePresenter(this);
 
         cacheManager=new CacheManager<>(getActivity(), AppConfig.GANK_CACHE_NAME,GankCategoryBean.class);
+
         wvGank.setWebChromeClient(new WebChromeClient());
         wvGank.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         wvGank.getSettings().setSupportZoom(false);//禁用放大缩小
@@ -199,5 +185,20 @@ public class GankHomeFragment extends LazyFragment implements GankHomeContract.V
         }
         MLog.i("lazyLoadData\t"+this.getClass().getSimpleName());
         presenter.loadLocalData();
+    }
+
+    @Override
+    public void showHTML(String body) {
+        //补充完整HTML代码
+        StringBuilder html = new StringBuilder();
+
+        html.append("<!DOCTYPE HTML>\n")
+                .append("<html>\n<head>\n <meta charset=\"utf-8\" />\n")
+                .append("\n</head>\n<body")
+                .append(body)
+                .append("</body>\n<html>");
+
+
+        wvGank.loadDataWithBaseURL("", html.toString(), "text/html;UTF-8", null, null);
     }
 }

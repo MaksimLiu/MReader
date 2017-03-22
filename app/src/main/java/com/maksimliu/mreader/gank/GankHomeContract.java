@@ -15,6 +15,7 @@ public interface GankHomeContract {
 
     interface View extends BaseView<Presenter> {
 
+        void showHTML(String body);
 
     }
 

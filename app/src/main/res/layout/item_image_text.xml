@@ -22,7 +22,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/spacing_normal"
-            tools:src="@drawable/test" />
+            />
 
         <TextView
             android:id="@+id/tv_home_title"

@@ -1,5 +1,6 @@
 package com.maksimliu.mreader.entity;
 
+import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -9,7 +10,7 @@ import java.util.List;
  * Created by MaksimLiu on 2017/3/18.
  */
 
-public class ZhiHuCommonNewsModel implements Serializable {
+public class ZhiHuCommonNewsModel implements Serializable,MultiItemEntity{
 
     /**
      * images : ["http://pic1.zhimg.com/9e2e2f963d8a959be5e3c06e2e9b8188.jpg"]
@@ -80,5 +81,10 @@ public class ZhiHuCommonNewsModel implements Serializable {
 
     public void setImages(List<String> images) {
         this.images = images;
+    }
+
+    @Override
+    public int getItemType() {
+        return 2;
     }
 }

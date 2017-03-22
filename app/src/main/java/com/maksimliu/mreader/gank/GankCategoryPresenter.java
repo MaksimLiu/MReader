@@ -1,25 +1,19 @@
 package com.maksimliu.mreader.gank;
 
-import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.api.GankApi;
 import com.maksimliu.mreader.common.AppConfig;
 import com.maksimliu.mreader.entity.GankCategoryBean;
 import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.utils.CacheManager;
+import com.maksimliu.mreader.network.RetrofitHelper;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.File;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by MaksimLiu on 2017/3/16.
@@ -47,21 +41,8 @@ public class GankCategoryPresenter implements GankCategoryContract.Presenter {
 
         cacheManager = new CacheManager<>(MReaderApplication.getContext(), AppConfig.GANK_CACHE_NAME, GankCategoryBean.class);
 
-        File cacheFile = new File(MReaderApplication.getContext().getExternalCacheDir(), "gank");
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(8, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
-                .writeTimeout(5, TimeUnit.SECONDS)
-                .addNetworkInterceptor(new StethoInterceptor())
-                .cache(new Cache(cacheFile, 1024 * 1024 * 10)) //10M缓存空间
-                .build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(okHttpClient)
-                .baseUrl(GankApi.BASE_API_URL)
-                .build();
+        Retrofit retrofit = RetrofitHelper.create(GankApi.BASE_API_URL);
 
         gankApi = retrofit.create(GankApi.class);
 

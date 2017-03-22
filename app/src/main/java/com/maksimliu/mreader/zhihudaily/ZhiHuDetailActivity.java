@@ -15,13 +15,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
-import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.base.EventActivity;
+import com.maksimliu.mreader.common.AppConfig;
 import com.maksimliu.mreader.entity.ZhiHuDetailBean;
 import com.maksimliu.mreader.event.EventManager;
-import com.maksimliu.mreader.utils.ACache;
+import com.maksimliu.mreader.utils.CacheManager;
 import com.maksimliu.mreader.utils.MLog;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -47,9 +46,8 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
 
     private ZhiHuDetailContract.Presenter presenter;
 
-    private ACache aCache;
 
-    private Gson gson;
+    private CacheManager<ZhiHuDetailBean> cacheManager;
 
     /**
      * 当前阅读的新闻ID
@@ -64,10 +62,7 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
 
         setSupportActionBar(toolbarZhihuDetail);
 
-        aCache = ACache.get(MReaderApplication.getContext());
-
-        gson = new Gson();
-
+        cacheManager = new CacheManager<>(this, AppConfig.ZHIHU_CACHE_NAME, ZhiHuDetailBean.class);
         wvZhihuDetail.setWebChromeClient(new WebChromeClient());
         wvZhihuDetail.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         wvZhihuDetail.getSettings().setSupportZoom(false);//禁用放大缩小
@@ -90,7 +85,7 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
     @Override
     protected void afterCreate(Bundle savedInstanceState) {
 
-        newsId=getIntent().getStringExtra("newsId");
+        newsId = getIntent().getStringExtra("newsId");
         MLog.i(newsId);
 
     }
@@ -115,15 +110,10 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
             return;
         }
 
-//        if (event == EventManager.ZhiHuNewsDetail.POST_NEWS_ID) {
-//            newsId = (String) event.getObject();
-//
-//            return;
-//        }
 
-        if (event== EventManager.ZhiHuNewsDetail.ERROR){
-            int error_code= (int) event.getObject();
-            switch (error_code){
+        if (event == EventManager.ZhiHuNewsDetail.ERROR) {
+            int error_code = (int) event.getObject();
+            switch (error_code) {
 
                 case ZhiHuDetailContract.NO_DETAIL_CACHE:
                     presenter.fetchNewsDetail(newsId);
@@ -133,47 +123,28 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
             return;
         }
 
-       if (event== EventManager.ZhiHuNewsDetail.GET_DETAIL){
+        if (event == EventManager.ZhiHuNewsDetail.GET_DETAIL) {
 
-           MLog.i("onZhiHuNewsDetail GET_DETAIL");
-           ZhiHuDetailBean detail = (ZhiHuDetailBean) event.getObject();
-
-
-           aCache.put("zhihu_detail" + detail.getId(), gson.toJson(detail));
-
-           Glide.with(this).load(detail.getImage()).into(ivZhihuDetail); //更新顶部图片
-
-           toolbarZhihuDetailLayout.setTitle(detail.getTitle());//新闻标题
-
-           tvImageSource.setText(detail.getImage_source());//图片来源
-
-           newsId = String.valueOf(detail.getId());//新闻ID
-
-           StringBuilder css = new StringBuilder();
-
-           //添加引用本地CSS文件
-           css.append("<link rel=\"stylesheet\" href=\"");
-           css.append("file:///android_asset/zhihudaily_detail.css");
-           css.append("\" type=\"text/css\" />");
+            MLog.i("onZhiHuNewsDetail GET_DETAIL");
+            ZhiHuDetailBean bean = (ZhiHuDetailBean) event.getObject();
 
 
-           //补充完整HTML代码
-           StringBuilder html = new StringBuilder();
+            cacheManager.put(ZhiHuDetailContract.ZHIHU_DETAIL_NEWS + newsId, bean);
 
-           html.append("<!DOCTYPE HTML>\n")
-                   .append("<html>\n<head>\n <meta charset=\"utf-8\" />\n")
-                   .append(css.toString())
-                   .append("\n</head>\n<body")
-                   .append(detail.getBody())
-                   .append("</body>\n<html>");
+            Glide.with(this).load(bean.getImage()).into(ivZhihuDetail); //更新顶部图片
 
-           //  wvZhihuDetail.loadData("","text/html","utf-8");
-           //加载本地HTML内容，PS:以上的处理方式，在4.0以上加载中文会出现乱码
-           wvZhihuDetail.loadDataWithBaseURL("file:///android_asset/", html.toString(), "text/html;utf-8", null, null);
-       }
+            toolbarZhihuDetailLayout.setTitle(bean.getTitle());//新闻标题
+
+            tvImageSource.setText(bean.getImage_source());//图片来源
+
+            newsId = String.valueOf(bean.getId());//新闻ID
+
+            showHTML(bean.getBody());
+        }
 
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -205,4 +176,29 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
     }
 
 
+    @Override
+    public void showHTML(String body) {
+
+        StringBuilder css = new StringBuilder();
+
+        //添加引用本地CSS文件
+        css.append("<link rel=\"stylesheet\" href=\"");
+        css.append("file:///android_asset/zhihudaily_detail.css");
+        css.append("\" type=\"text/css\" />");
+
+
+        //补充完整HTML代码
+        StringBuilder html = new StringBuilder();
+
+        html.append("<!DOCTYPE HTML>\n")
+                .append("<html>\n<head>\n <meta charset=\"utf-8\" />\n")
+                .append(css.toString())
+                .append("\n</head>\n<body")
+                .append(body)
+                .append("</body>\n<html>");
+
+        //  wvZhihuDetail.loadData("","text/html","utf-8");
+        //加载本地HTML内容，PS:以上的处理方式，在4.0以上加载中文会出现乱码
+        wvZhihuDetail.loadDataWithBaseURL("file:///android_asset/", html.toString(), "text/html;utf-8", null, null);
+    }
 }
