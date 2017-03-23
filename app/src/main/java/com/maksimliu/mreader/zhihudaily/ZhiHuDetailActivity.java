@@ -55,6 +55,19 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
     private String newsId;
 
     @Override
+    protected void initListener() {
+
+        srlZhihuDetail.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                presenter.loadNewsDetail(newsId);
+                srlZhihuDetail.setRefreshing(false);
+            }
+        });
+    }
+
+    @Override
     protected void initView() {
 
         new ZhiHuDetailPresenter(this);
@@ -70,14 +83,6 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
         wvZhihuDetail.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);//优先使用缓存
 
 
-        srlZhihuDetail.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-                presenter.loadNewsDetail(newsId);
-                srlZhihuDetail.setRefreshing(false);
-            }
-        });
 
 
     }

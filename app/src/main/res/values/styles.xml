@@ -40,6 +40,14 @@
         <item name="android:textColor">@color/secondaryText</item>
     </style>
 
+    <style name="FullScreenDialog" parent="Theme.AppCompat.Dialog" >
+        <item name="android:windowBackground">@color/transparent_background</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+
+    </style>
 
 
 

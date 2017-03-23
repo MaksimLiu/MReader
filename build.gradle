@@ -12,6 +12,8 @@ buildscript {
     }
 }
 
+
+
 allprojects {
     repositories {
         jcenter()
@@ -21,4 +23,21 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+ext {
+
+    supportVersion = '25.3.0'
+    glideVersion='3.7.0'
+    retrofitVersion='2.2.0'
+    photoviewVersion='1.2.4'
+    materialdatetimepickerVersion='3.1.3'
+    gsonVersion='2.8.0'
+    eventbusVersion='3.0.0'
+    okhttpVersion='3.6.0'
+    butterKnifeVersion='8.5.1'
+    convertGson='2.1.0'
+    baseRecyclerviewAdapterHelperVersion='2.8.6'
+    constraintlayoutVerison='1.0.0-beta4'
+
 }

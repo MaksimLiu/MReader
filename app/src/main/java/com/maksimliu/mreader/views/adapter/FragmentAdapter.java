@@ -41,26 +41,27 @@ public class FragmentAdapter extends FragmentPagerAdapter {
         switch (position) {
 
             case 0:
-                fragment = new GankHomeFragment();
-                break;
-            case 1:
-                fragment = new GankAndroidFragment();
-                break;
-            case 2:
-                fragment = new GankIOSFragment();
-                break;
-            case 3:
-                fragment = new GankFrontEndFragment();
-                break;
-            case 4:
-                fragment = new GankExtraResourceFragment();
-                break;
-            case 5:
-                fragment = new GankOthersFragment();
-                break;
-            case 6:
                 fragment=new GankFuLiFragment();
                 break;
+            case 1:
+                fragment = new GankHomeFragment();
+                break;
+            case 2:
+                fragment = new GankAndroidFragment();
+                break;
+            case 3:
+                fragment = new GankIOSFragment();
+                break;
+            case 4:
+                fragment = new GankFrontEndFragment();
+                break;
+            case 5:
+                fragment = new GankExtraResourceFragment();
+                break;
+            case 6:
+                fragment = new GankOthersFragment();
+                break;
+
         }
 
         return fragment;

@@ -10,9 +10,12 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.maksimliu.mreader.BrowserActivity;
+import com.maksimliu.mreader.PhotoViewerActivity;
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.entity.GankCategoryModel;
 import com.maksimliu.mreader.gank.GankFuLiFragment;
+import com.maksimliu.mreader.utils.MLog;
 
 import java.util.List;
 
@@ -62,8 +65,8 @@ public class GankRvAdapter extends BaseMultiItemQuickAdapter<GankCategoryModel, 
                 helper.setOnClickListener(R.id.card_gank_category_text, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse(item.getUrl()));
+                        Intent intent = new Intent(context, BrowserActivity.class);
+                        intent.putExtra("url",item.getUrl());
                         context.startActivity(intent);
                     }
                 });
@@ -75,10 +78,21 @@ public class GankRvAdapter extends BaseMultiItemQuickAdapter<GankCategoryModel, 
                 helper.setOnClickListener(R.id.card_gank_category_image, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse(item.getUrl()));
+                        Intent intent = new Intent(context,BrowserActivity.class);
+                        intent.putExtra("url",item.getUrl());
                         context.startActivity(intent);
 
+                    }
+                });
+
+                helper.setOnClickListener(R.id.iv_gank_category, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Intent intent=new Intent(context,PhotoViewerActivity.class);
+                        intent.putExtra("imgUrl",item.getImages().get(0));
+                        intent.putExtra("desc",item.getDesc());
+                        context.startActivity(intent);
                     }
                 });
                 Glide.with(context).load(item.getImages().get(0)).into((ImageView) helper.getView(R.id.iv_gank_category));
@@ -94,6 +108,16 @@ public class GankRvAdapter extends BaseMultiItemQuickAdapter<GankCategoryModel, 
             case IMAGE_VIEW_TYPE:
 
                 Glide.with(context).load(item.getUrl()).into((ImageView) helper.getView(R.id.iv_item_card));
+
+                helper.setOnClickListener(R.id.iv_item_card, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent=new Intent(context, PhotoViewerActivity.class);
+                        intent.putExtra("imgUrl",item.getUrl());
+                        intent.putExtra("desc",item.getDesc());
+                        context.startActivity(intent);
+                    }
+                });
                 break;
         }
     }

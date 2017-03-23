@@ -31,10 +31,15 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
 
     private GankFragment gankFragment;
 
-
+    private  DrawerLayout drawer;
 
     private Fragment currentFragment;
 
+
+    @Override
+    protected void initListener() {
+
+    }
 
     @Override
     protected void initView() {
@@ -68,11 +73,12 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer= (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -99,6 +105,7 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
                 if (currentFragment == zhiHuDailyHomeFragment) {
                     break;
                 }
+
                 FragmentUtil.switchFragment(currentFragment, zhiHuDailyHomeFragment);
                 currentFragment = zhiHuDailyHomeFragment;
 

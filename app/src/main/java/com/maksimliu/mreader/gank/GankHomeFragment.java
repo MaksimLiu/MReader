@@ -3,26 +3,25 @@ package com.maksimliu.mreader.gank;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.ProgressBar;
 
-import com.google.gson.Gson;
-import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.R;
-import com.maksimliu.mreader.api.GankApi;
 import com.maksimliu.mreader.base.LazyFragment;
 import com.maksimliu.mreader.common.AppConfig;
 import com.maksimliu.mreader.entity.GankCategoryBean;
 import com.maksimliu.mreader.entity.GankHomeBean;
 import com.maksimliu.mreader.entity.GankHomeModel;
 import com.maksimliu.mreader.event.EventManager;
-import com.maksimliu.mreader.utils.ACache;
 import com.maksimliu.mreader.utils.CacheManager;
 import com.maksimliu.mreader.utils.DateUtil;
 import com.maksimliu.mreader.utils.MLog;
@@ -45,6 +44,12 @@ public class GankHomeFragment extends LazyFragment implements GankHomeContract.V
     WebView wvGank;
     @BindView(R.id.srl_gank)
     SwipeRefreshLayout srlGank;
+    @BindView(R.id.pb_webview)
+    ProgressBar pbWebview;
+    @BindView(R.id.app_bar)
+    AppBarLayout appBar;
+    @BindView(R.id.wv_toolbar)
+    Toolbar wvToolbar;
 
     private GankHomeContract.Presenter presenter;
 
@@ -68,13 +73,12 @@ public class GankHomeFragment extends LazyFragment implements GankHomeContract.V
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_gank_home, container, false);
+        View view = inflater.inflate(R.layout.webview_main, container, false);
         ButterKnife.bind(this, view);
         isPrepared = true;
 
         return view;
     }
-
 
 
     @Override
@@ -143,17 +147,28 @@ public class GankHomeFragment extends LazyFragment implements GankHomeContract.V
     }
 
 
-
-
     @Override
     protected void setupView() {
 
+        wvToolbar.setVisibility(View.GONE);
+        appBar.setVisibility(View.GONE);
 
         new GankHomePresenter(this);
 
-        cacheManager=new CacheManager<>(getActivity(), AppConfig.GANK_CACHE_NAME,GankCategoryBean.class);
+        cacheManager = new CacheManager<>(getActivity(), AppConfig.GANK_CACHE_NAME, GankCategoryBean.class);
 
-        wvGank.setWebChromeClient(new WebChromeClient());
+        wvGank.setWebChromeClient(new WebChromeClient() {
+
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+                pbWebview.setProgress(newProgress);
+                if (newProgress == 100) {
+                    pbWebview.setVisibility(View.GONE);
+                }
+
+            }
+        });
         wvGank.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         wvGank.getSettings().setSupportZoom(false);//禁用放大缩小
         wvGank.getSettings().setJavaScriptEnabled(false);//禁用JS交互
@@ -183,7 +198,6 @@ public class GankHomeFragment extends LazyFragment implements GankHomeContract.V
         if (!isPrepared || !isVisible) {
             return;
         }
-        MLog.i("lazyLoadData\t"+this.getClass().getSimpleName());
         presenter.loadLocalData();
     }
 

@@ -48,13 +48,14 @@ public class GankFragment extends BaseFragment{
     public void setupView() {
 
         List<String> tabs = new ArrayList<>();
+        tabs.add("妹子");
         tabs.add("主页");
         tabs.add("Android");
         tabs.add("iOS");
         tabs.add("前端");
         tabs.add("拓展资源");
         tabs.add("瞎推荐");
-        tabs.add("妹子");
+
 
         FragmentAdapter adapter = new FragmentAdapter(getChildFragmentManager(), tabs);
 

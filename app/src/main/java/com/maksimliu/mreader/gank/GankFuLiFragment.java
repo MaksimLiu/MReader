@@ -23,6 +23,7 @@ import com.maksimliu.mreader.event.EventManager;
 import com.maksimliu.mreader.utils.ACache;
 import com.maksimliu.mreader.utils.CacheManager;
 import com.maksimliu.mreader.utils.MLog;
+import com.maksimliu.mreader.utils.SpaceItemDecoration;
 import com.maksimliu.mreader.views.adapter.GankRvAdapter;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -106,6 +107,7 @@ public class GankFuLiFragment extends LazyFragment implements GankCategoryContra
 
         cacheManager.put(GankApi.FULI_CATEGORY_TYPE, bean);
         adapter.addData(bean.getResults());
+        pbGank.setVisibility(View.GONE);
     }
 
     @Override
@@ -116,7 +118,11 @@ public class GankFuLiFragment extends LazyFragment implements GankCategoryContra
         cacheManager=new CacheManager<>(getActivity(), AppConfig.GANK_CACHE_NAME,GankCategoryBean.class);
         adapter = new GankRvAdapter(this, new ArrayList<GankCategoryModel>());
 
+        //给RecyclerView item设置间距
+        int space = getResources().getDimensionPixelOffset(R.dimen.card_spacing);
+        recyclerView.addItemDecoration(new SpaceItemDecoration(space));
         recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(new SpaceItemDecoration(8));
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         recyclerView.setAdapter(adapter);
 
