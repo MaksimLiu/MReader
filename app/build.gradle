@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
+
+
     defaultConfig {
         applicationId "com.maksimliu.mreader"
         minSdkVersion 19
@@ -15,6 +17,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    //友盟多渠道打包
+    productFlavors {
+        coolapk{}
+    }
+
+    productFlavors.all { flavor ->
+        flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
     }
 }
 
@@ -55,6 +66,8 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.ext.butterKnifeVersion"
     compile "com.jakewharton:butterknife:$rootProject.ext.butterKnifeVersion"
 
+    //umeng
+    compile 'com.umeng.analytics:analytics:latest.integration'
 
     //debug
     compile 'com.facebook.stetho:stetho:1.4.2'

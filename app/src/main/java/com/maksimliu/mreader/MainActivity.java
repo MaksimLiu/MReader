@@ -51,6 +51,7 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
     protected void afterCreate(Bundle savedInstanceState) {
 
 
+
         if (savedInstanceState == null) {
 
 

@@ -9,8 +9,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 
+import com.maksimliu.mreader.BuildConfig;
 import com.maksimliu.mreader.common.AppConfig;
 import com.maksimliu.mreader.utils.MLog;
+import com.umeng.analytics.MobclickAgent;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -29,6 +31,18 @@ public abstract class BaseActivity extends AppCompatActivity {
         checkForAppPermission();
         afterCreate(savedInstanceState);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     protected abstract void initListener();
