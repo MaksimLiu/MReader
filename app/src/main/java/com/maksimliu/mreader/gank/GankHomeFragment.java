@@ -142,7 +142,9 @@ public class GankHomeFragment extends LazyFragment implements GankHomeContract.V
 
         cacheManager.put(GankHomeContract.HOME + year + "-" + month + "-" + day, gankBean);
 
-        showHTML(gankDailyModel.getContent().replaceAll("<img(.*)/>", ""));
+        showHTML(presenter.handleHTML(gankDailyModel.getContent()));
+
+
 
     }
 
@@ -184,7 +186,6 @@ public class GankHomeFragment extends LazyFragment implements GankHomeContract.V
             @Override
             public void onRefresh() {
 
-
                 presenter.fetchGankDaily(year, month, day);
 
                 srlGank.setRefreshing(false);
@@ -204,10 +205,21 @@ public class GankHomeFragment extends LazyFragment implements GankHomeContract.V
     @Override
     public void showHTML(String body) {
         //补充完整HTML代码
+        StringBuilder css = new StringBuilder();
+
+        //添加引用本地CSS文件
+        css.append("<link rel=\"stylesheet\" href=\"");
+        css.append("file:///android_asset/gank_home.css");
+        css.append("\" type=\"text/css\" />");
+
+
+
+        //补充完整HTML代码
         StringBuilder html = new StringBuilder();
 
         html.append("<!DOCTYPE HTML>\n")
                 .append("<html>\n<head>\n <meta charset=\"utf-8\" />\n")
+                .append(css.toString())
                 .append("\n</head>\n<body")
                 .append(body)
                 .append("</body>\n<html>");

@@ -3,13 +3,21 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
 
+    signingConfigs {
+        release {
+            keyAlias 'lxf0601'
+            keyPassword 'lxf0601'
+            storeFile file('../mreader.jks')
+            storePassword 'lxf0601'
+        }
+    }
 
     defaultConfig {
         applicationId "com.maksimliu.mreader"
         minSdkVersion 19
         targetSdkVersion 25
         versionCode 1
-        versionName "0.2.1"
+        versionName "0.2.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -21,7 +29,7 @@ android {
 
     //友盟多渠道打包
     productFlavors {
-        coolapk{}
+        coolapk {}
     }
 
     productFlavors.all { flavor ->
@@ -34,46 +42,35 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
     //support
+
     compile "com.android.support:appcompat-v7:$rootProject.ext.supportVersion"
     compile "com.android.support:support-v4:$rootProject.ext.supportVersion"
     compile "com.android.support:cardview-v7:$rootProject.ext.supportVersion"
-
-
     //network
-    compile "com.squareup.okhttp3:okhttp:$rootProject.ext.okhttpVersion"
+    //    compile "com.squareup.okhttp3:okhttp:$rootProject.ext.okhttpVersion"
     compile "com.squareup.retrofit2:retrofit:$rootProject.ext.retrofitVersion"
     compile "com.squareup.retrofit2:converter-gson:$rootProject.ext.convertGson"
-
     //image
     compile "com.github.bumptech.glide:glide:$rootProject.ext.glideVersion"
-
-
     //json
     compile "com.google.code.gson:gson:$rootProject.ext.gsonVersion"
-
     //widget
     compile "com.github.CymChad:BaseRecyclerViewAdapterHelper:$rootProject.ext.baseRecyclerviewAdapterHelperVersion"
     compile "com.github.chrisbanes.photoview:library:$rootProject.ext.photoviewVersion"
     compile "com.wdullaer:materialdatetimepicker:$rootProject.ext.materialdatetimepickerVersion"
     compile "com.android.support.constraint:constraint-layout:$rootProject.ext.constraintlayoutVerison"
-
     //event
     compile "org.greenrobot:eventbus:$rootProject.ext.eventbusVersion"
-
     //inject
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.ext.butterKnifeVersion"
     compile "com.jakewharton:butterknife:$rootProject.ext.butterKnifeVersion"
-
     //umeng
-    compile 'com.umeng.analytics:analytics:latest.integration'
-
     //debug
+    compile "com.android.support:design:$rootProject.ext.supportVersion"
+    compile 'com.umeng.analytics:analytics:latest.integration'
     compile 'com.facebook.stetho:stetho:1.4.2'
     compile 'com.facebook.stetho:stetho-okhttp3:1.4.2'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
     testCompile 'junit:junit:4.12'
-
-
-
 }

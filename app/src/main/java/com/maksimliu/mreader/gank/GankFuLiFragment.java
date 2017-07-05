@@ -155,6 +155,7 @@ public class GankFuLiFragment extends LazyFragment implements GankCategoryContra
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                adapter.getData().clear();
                 presenter.fetchCategory(GankApi.FULI_CATEGORY_TYPE, 1 + "");
                 swipeRefresh.setRefreshing(false);
             }

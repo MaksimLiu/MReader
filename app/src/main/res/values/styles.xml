@@ -17,11 +17,15 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="ToolbarTitleTextAppearance">
+    <style name="ExpandedTitleTextAppearance">
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/font_larger</item>
     </style>
+    <style name="CollapsedTitleTextAppearance">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/font_large</item>
 
+    </style>
 
     <style name="BaseTextView">
         <item name="android:paddingStart">@dimen/spacing_normal</item>

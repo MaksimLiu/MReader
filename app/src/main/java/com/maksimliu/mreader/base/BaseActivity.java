@@ -1,7 +1,6 @@
 package com.maksimliu.mreader.base;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -9,12 +8,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 
-import com.maksimliu.mreader.BuildConfig;
 import com.maksimliu.mreader.common.AppConfig;
 import com.maksimliu.mreader.utils.MLog;
 import com.umeng.analytics.MobclickAgent;
-
-import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by MaksimLiu on 2017/3/3.
@@ -89,10 +85,15 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     public boolean checkForAppPermission() {
 
-        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (result == PackageManager.PERMISSION_GRANTED) {
+        int writePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int readPhoneStatePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+        if (writePermission == PackageManager.PERMISSION_GRANTED) {
             return true;
-        } else {
+        }
+        else if (readPhoneStatePermission==PackageManager.PERMISSION_GRANTED){
+            return true;
+        }
+        else {
             requestForAppPermission();
         }
         return false;
@@ -106,7 +107,9 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     private void requestForAppPermission() {
 
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, AppConfig.WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                AppConfig.PERMISSION_REQUEST_CODE);
+
     }
 
 

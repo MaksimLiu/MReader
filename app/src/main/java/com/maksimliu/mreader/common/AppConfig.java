@@ -15,7 +15,9 @@ public class AppConfig {
 
     public static final String GANK_CACHE_NAME = "gank";
 
-    public static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE=1;
+    public static final int PERMISSION_REQUEST_CODE =1;
+
+
     /**
      * 默认存放下载文件路径
      */

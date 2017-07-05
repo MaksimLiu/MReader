@@ -79,7 +79,7 @@ public class ACache {
     }
 
     public static ACache get(File cacheDir, long max_zise, int max_count) {
-        ACache manager = mInstanceMap.get(cacheDir.getAbsoluteFile() + myPid());
+        ACache manager = mInstanceMap.get(cacheDir.getAbsolutePath()+ myPid());
         if (manager == null) {
             manager = new ACache(cacheDir, max_zise, max_count);
             mInstanceMap.put(cacheDir.getAbsolutePath() + myPid(), manager);

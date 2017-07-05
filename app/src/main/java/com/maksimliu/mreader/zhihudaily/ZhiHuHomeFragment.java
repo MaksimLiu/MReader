@@ -111,6 +111,7 @@ public class ZhiHuHomeFragment extends EventFragment implements ZhiHuHomeContrac
         MLog.i("LoadMore");
         //每次请求在当前日期减一天
         calendar.add(Calendar.DAY_OF_MONTH, -1);
+        MLog.i(DateFormat.format("yyyyMMdd",calendar).toString());
         presenter.loadOldNews(calendar);
         adapter.setLoading(false);
 
@@ -179,6 +180,7 @@ public class ZhiHuHomeFragment extends EventFragment implements ZhiHuHomeContrac
 
         } else if (event == EventManager.ZhiHuDailyNews.SET_OLD_NEWS) {
             MLog.i("SET_OLD_NEWS");
+
 
             adapter.setNewData(bean.getCommonNewsModels());
             MLog.i("mYear:   " + mYear + "\n" + "mMonth:  " + mMonth + "\n" + "mDay: " + mDay);

@@ -1,30 +1,20 @@
 package com.maksimliu.mreader.gank;
 
-import com.google.gson.Gson;
 import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.api.GankApi;
 import com.maksimliu.mreader.common.AppConfig;
 import com.maksimliu.mreader.entity.GankHomeBean;
 import com.maksimliu.mreader.event.EventManager;
-import com.maksimliu.mreader.network.CacheInterceptor;
 import com.maksimliu.mreader.network.RetrofitHelper;
-import com.maksimliu.mreader.utils.ACache;
 import com.maksimliu.mreader.utils.CacheManager;
 import com.maksimliu.mreader.utils.DateUtil;
-import com.maksimliu.mreader.utils.MLog;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.File;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by MaksimLiu on 2017/3/9.
@@ -94,6 +84,25 @@ public class GankHomePresenter implements GankHomeContract.Presenter {
             event.setObject(GankHomeContract.NO_HOME_CACHE);
             EventBus.getDefault().post(event);
         }
+
+    }
+
+    @Override
+    public String handleHTML(String html) {
+
+
+        //去除li标签以及该标签下的img
+        String remove_li_img_reg = "<ul>\\s*<li><a.*>.*<img.*\\s*</ul>";
+
+        //去除html内容顶部的图片
+        String remove_top_img_reg = "<p>.*<img.*/></p>";
+
+        //去除底部的iframe
+        String remove_video_reg = "<h3>休息视频</h3>\\s*<ul>\\s*<li>.*\\s*<ul>\\s*</ul>\\s*</li>\\s*</ul>\\s*<if.*</iframe>";
+
+        return html.replaceAll(remove_li_img_reg, "")
+                .replaceAll(remove_top_img_reg, "")
+                .replaceAll(remove_video_reg, "");
 
     }
 

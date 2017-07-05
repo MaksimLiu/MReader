@@ -1,8 +1,10 @@
 package com.maksimliu.mreader;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
@@ -34,6 +36,8 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
     private  DrawerLayout drawer;
 
     private Fragment currentFragment;
+
+    private MenuItem menuItem;
 
 
     @Override
@@ -75,7 +79,7 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer= (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        DrawerMenuToggle toggle = new DrawerMenuToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
@@ -94,6 +98,13 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        menuItem=item;
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private void handleNavItemSelected(MenuItem item) {
         TabLayout tabLayout=((TabLayout)findViewById(R.id.tab));
 
         switch (item.getItemId()) {
@@ -125,6 +136,9 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
 
                 break;
 
+            case R.id.nav_setting:
+                startActivity(new Intent(MainActivity.this,SettingsActivity.class));
+                break;
             case R.id.nav_about:
                 startActivity(new Intent(MainActivity.this, AboutActivity.class));
                 break;
@@ -132,11 +146,20 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
             default:
                 break;
         }
+    }
 
+    public class DrawerMenuToggle extends ActionBarDrawerToggle{
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+        public DrawerMenuToggle(Activity activity, DrawerLayout drawerLayout, Toolbar toolbar, @StringRes int openDrawerContentDescRes, @StringRes int closeDrawerContentDescRes) {
+            super(activity, drawerLayout, toolbar, openDrawerContentDescRes, closeDrawerContentDescRes);
+        }
+
+        @Override
+        public void onDrawerClosed(View drawerView) {
+            super.onDrawerClosed(drawerView);
+            handleNavItemSelected(menuItem);
+
+        }
     }
 
 

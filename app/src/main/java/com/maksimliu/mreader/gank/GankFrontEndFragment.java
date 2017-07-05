@@ -159,6 +159,7 @@ public class GankFrontEndFragment extends LazyFragment implements GankCategoryCo
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                adapter.getData().clear();
                 presenter.fetchCategory(GankApi.FRONT_END_CATEGORY_TYPE, 1 + "");
                 swipeRefresh.setRefreshing(false);
             }

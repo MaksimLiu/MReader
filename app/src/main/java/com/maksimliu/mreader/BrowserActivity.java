@@ -14,12 +14,13 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.maksimliu.mreader.base.BaseActivity;
+import com.maksimliu.mreader.utils.MLog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by MaksimLiu on 2017/3/22.
+ * Created by MaksimLiu on 201++7/3/22.
  */
 
 public class BrowserActivity extends BaseActivity {
@@ -53,8 +54,8 @@ public class BrowserActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         wvGank.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        wvGank.getSettings().setSupportZoom(false);//禁用放大缩小
-        wvGank.getSettings().setJavaScriptEnabled(true);//禁用JS交互
+        wvGank.getSettings().setJavaScriptEnabled(true);
+        wvGank.getSettings().setSupportZoom(false);
         wvGank.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);//优先使用缓存
 
         setSupportActionBar(wvToolbar);
@@ -75,7 +76,7 @@ public class BrowserActivity extends BaseActivity {
         loadUrl = getIntent().getStringExtra("url");
         String title = getIntent().getStringExtra("title");
 
-        wvToolbar.setTitle(title);
+        getSupportActionBar().setTitle(title);
 
         wvGank.loadUrl(loadUrl);
 
@@ -118,16 +119,6 @@ public class BrowserActivity extends BaseActivity {
         return R.layout.webview_main;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
 
 
     @Override
@@ -135,5 +126,16 @@ public class BrowserActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.bind(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 }

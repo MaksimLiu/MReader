@@ -155,6 +155,7 @@ public class GankExtraResourceFragment extends LazyFragment implements GankCateg
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                adapter.getData().clear();
                 presenter.fetchCategory(GankApi.EXTRA_RESOURCE_CATEGORY_TYPE, 1 + "");
                 swipeRefresh.setRefreshing(false);
             }

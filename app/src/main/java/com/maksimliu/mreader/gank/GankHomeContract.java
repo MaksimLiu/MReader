@@ -17,11 +17,14 @@ public interface GankHomeContract {
 
         void showHTML(String body);
 
+
     }
 
     interface Presenter extends BasePresenter {
 
         void loadLocalData();
+
+        String handleHTML(String html);
 
         void fetchGankDaily(String year, String monthOfYear, String dayOfMonth);
 

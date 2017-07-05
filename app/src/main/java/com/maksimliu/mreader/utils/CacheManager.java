@@ -4,9 +4,6 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
 /**
  * Created by MaksimLiu on 2017/3/21.
  * <h3>缓存管理</h3>

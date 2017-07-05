@@ -13,10 +13,17 @@ import java.io.IOException;
 
 /**
  * Created by MaksimLiu on 2017/3/23.
+ * <h3>文件管理</h3>
  */
 
 public class FileUtil {
 
+    /**
+     * 保存图片到存储卡
+     * @param fileName 文件名称
+     * @param bitmap bitmap
+     * @return
+     */
     public static File saveImage(String fileName, Bitmap bitmap) {
 
         File dir = new File(Environment.getExternalStorageDirectory(),"MReader");

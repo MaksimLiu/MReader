@@ -164,6 +164,7 @@ public class GankIOSFragment extends LazyFragment implements GankCategoryContrac
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                adapter.getData().clear();
                 presenter.fetchCategory(GankApi.IOS_CATEGORY_TYPE, 1 + "");
                 swipeRefresh.setRefreshing(false);
             }

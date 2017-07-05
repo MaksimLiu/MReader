@@ -1,8 +1,10 @@
 package com.maksimliu.mreader.zhihudaily;
 
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -28,6 +30,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailContract.View {
 
@@ -43,6 +46,8 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
     CollapsingToolbarLayout toolbarZhihuDetailLayout;
     @BindView(R.id.tv_image_source)
     TextView tvImageSource;
+
+
 
     private ZhiHuDetailContract.Presenter presenter;
 
@@ -74,6 +79,8 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbarZhihuDetail);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
 
         cacheManager = new CacheManager<>(this, AppConfig.ZHIHU_CACHE_NAME, ZhiHuDetailBean.class);
         wvZhihuDetail.setWebChromeClient(new WebChromeClient());
@@ -81,7 +88,6 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
         wvZhihuDetail.getSettings().setSupportZoom(false);//禁用放大缩小
         wvZhihuDetail.getSettings().setJavaScriptEnabled(false);//禁用JS交互
         wvZhihuDetail.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);//优先使用缓存
-
 
 
 
@@ -151,15 +157,7 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
 
 
     @Override
@@ -206,4 +204,14 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
         //加载本地HTML内容，PS:以上的处理方式，在4.0以上加载中文会出现乱码
         wvZhihuDetail.loadDataWithBaseURL("file:///android_asset/", html.toString(), "text/html;utf-8", null, null);
     }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+    }
+
+
+
 }

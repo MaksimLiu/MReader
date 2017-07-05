@@ -1,9 +1,6 @@
 package com.maksimliu.mreader.network;
 
-import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.maksimliu.mreader.MReaderApplication;
-import com.maksimliu.mreader.api.GankApi;
-import com.maksimliu.mreader.network.CacheInterceptor;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;

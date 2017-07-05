@@ -10,10 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
-import com.google.gson.Gson;
-import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.api.GankApi;
 import com.maksimliu.mreader.base.LazyFragment;
@@ -21,7 +18,6 @@ import com.maksimliu.mreader.common.AppConfig;
 import com.maksimliu.mreader.entity.GankCategoryBean;
 import com.maksimliu.mreader.entity.GankCategoryModel;
 import com.maksimliu.mreader.event.EventManager;
-import com.maksimliu.mreader.utils.ACache;
 import com.maksimliu.mreader.utils.CacheManager;
 import com.maksimliu.mreader.utils.MLog;
 import com.maksimliu.mreader.views.adapter.GankRvAdapter;
@@ -30,7 +26,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -135,6 +130,7 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
         adapter.setEnableLoadMore(true);
 
         recyclerView.setHasFixedSize(true);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
     }
@@ -168,6 +164,7 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                adapter.getData().clear();
                 presenter.fetchCategory(GankApi.ANDROID_CATEGORY_TYPE,1+"");
                 swipeRefresh.setRefreshing(false);
             }
@@ -212,7 +209,6 @@ public class GankAndroidFragment extends LazyFragment implements GankCategoryCon
         }
         //加载本地最新数据
         presenter.loadCategory(GankApi.ANDROID_CATEGORY_TYPE);
-
 
     }
 }

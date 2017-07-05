@@ -67,6 +67,7 @@ public class GankRvAdapter extends BaseMultiItemQuickAdapter<GankCategoryModel, 
                     public void onClick(View v) {
                         Intent intent = new Intent(context, BrowserActivity.class);
                         intent.putExtra("url",item.getUrl());
+                        intent.putExtra("title",item.getDesc());
                         context.startActivity(intent);
                     }
                 });
@@ -80,6 +81,7 @@ public class GankRvAdapter extends BaseMultiItemQuickAdapter<GankCategoryModel, 
                     public void onClick(View v) {
                         Intent intent = new Intent(context,BrowserActivity.class);
                         intent.putExtra("url",item.getUrl());
+                        intent.putExtra("title",item.getDesc());
                         context.startActivity(intent);
 
                     }

@@ -1,0 +1,52 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:divider="@drawable/shape_divider"
+    android:orientation="vertical"
+    android:showDividers="middle">
+
+    <RelativeLayout
+        android:id="@+id/rl_night_mode"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_small">
+
+        <android.support.v7.widget.AppCompatTextView
+            style="@style/TitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:text="@string/night_mode" />
+
+        <Switch
+            android:id="@+id/switch_night_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_small">
+
+        <android.support.v7.widget.AppCompatTextView
+
+            style="@style/TitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:text="@string/clear_cache" />
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_cache_size"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+</LinearLayout>
