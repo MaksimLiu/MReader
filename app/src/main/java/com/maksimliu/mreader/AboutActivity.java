@@ -8,19 +8,23 @@ public class AboutActivity extends BaseActivity {
 
 
     @Override
+    protected void initVariable() {
+
+    }
+
+    @Override
     protected void initListener() {
 
-    }
 
-    @Override
-    protected void initView() {
 
     }
 
     @Override
-    protected void afterCreate(Bundle savedInstanceState) {
+    protected void initView(Bundle savedInstanceState) {
 
     }
+
+
 
     @Override
     protected int getLayoutId() {

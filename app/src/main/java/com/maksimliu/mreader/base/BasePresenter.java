@@ -7,9 +7,9 @@ package com.maksimliu.mreader.base;
 
 public interface BasePresenter {
 
-    void start();
+    void subscribe();
 
-    void stop();
+    void unsubscribe();
 
 
 }

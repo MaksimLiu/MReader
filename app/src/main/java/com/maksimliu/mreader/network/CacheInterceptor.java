@@ -19,7 +19,6 @@ public class CacheInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
 
-        MLog.i("CacheInterceptor");
         Request request = chain.request();
 
         if (!NetworkState.isConnected()) {
@@ -27,10 +26,8 @@ public class CacheInterceptor implements Interceptor {
             request = request.newBuilder()
                     .cacheControl(CacheControl.FORCE_CACHE)
                     .build();
-            MLog.i("暂无网络");
 
         }
-        MLog.i("新请求 ->>>>"+request.toString());
         Response response = chain.proceed(request);
         if (NetworkState.isConnected()) {
 

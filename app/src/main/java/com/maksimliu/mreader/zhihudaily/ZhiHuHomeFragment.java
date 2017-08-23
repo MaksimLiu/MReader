@@ -9,39 +9,31 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.maksimliu.mreader.R;
+import com.maksimliu.mreader.base.BaseRxFragment;
 import com.maksimliu.mreader.base.EventFragment;
-import com.maksimliu.mreader.common.AppConfig;
-import com.maksimliu.mreader.entity.ZhiHuNewsBean;
-import com.maksimliu.mreader.entity.ZhiHuCommonNewsModel;
-import com.maksimliu.mreader.event.EventManager;
-import com.maksimliu.mreader.gank.GankHomeContract;
-import com.maksimliu.mreader.utils.CacheManager;
+import com.maksimliu.mreader.bean.ZhiHuNewsBean;
+import com.maksimliu.mreader.bean.ZhiHuStories;
 import com.maksimliu.mreader.utils.DateUtil;
 import com.maksimliu.mreader.utils.MLog;
 import com.maksimliu.mreader.utils.SpaceItemDecoration;
 import com.maksimliu.mreader.views.adapter.ZhiHuRvAdapter;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ZhiHuHomeFragment extends EventFragment implements ZhiHuHomeContract.View {
+public class ZhiHuHomeFragment extends BaseRxFragment implements ZhiHuHomeContract.View, BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
 
 
     @BindView(R.id.rv_zhihu)
@@ -50,142 +42,32 @@ public class ZhiHuHomeFragment extends EventFragment implements ZhiHuHomeContrac
     SwipeRefreshLayout srlZhihu;
     @BindView(R.id.fab_zhihu)
     FloatingActionButton fabZhihu;
-    /**
-     * 获取最后一个可见Item位置
-     * 用于判断RecyclerView是否已经到达底部
-     */
-    private int lastVisibleItemPosition;
 
 
-    private ZhiHuHomeContract.Presenter presenter;
+    private ZhiHuHomePresenter mPresenter;
 
+    private ZhiHuRvAdapter mAdapter;
 
-    private Bundle bundle;
-
-    private ZhiHuRvAdapter adapter;
-
-
-    private CacheManager<ZhiHuNewsBean> cacheManager;
 
     public ZhiHuHomeFragment() {
         // Required empty public constructor
     }
 
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        bundle = outState;
-
+    public static ZhiHuHomeFragment newInstance() {
+        return new ZhiHuHomeFragment();
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
-        View view = inflater.inflate(R.layout.fragment_zhi_hu_daily_home, container, false);
-        ButterKnife.bind(this, view);
-        return view;
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (bundle == null) {
-
-            presenter.loadLatestNews();
-        }
-
+    protected int getLayoutId() {
+        return R.layout.fragment_zhi_hu_daily_home;
     }
 
 
     private Calendar calendar;
 
-    private void loadMore() {
 
-        MLog.i("LoadMore");
-        //每次请求在当前日期减一天
-        calendar.add(Calendar.DAY_OF_MONTH, -1);
-        MLog.i(DateFormat.format("yyyyMMdd",calendar).toString());
-        presenter.loadOldNews(calendar);
-        adapter.setLoading(false);
-
-    }
-
-
-    @Override
-    public void setPresenter(ZhiHuHomeContract.Presenter presenter) {
-
-
-        this.presenter = presenter;
-
-
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onZhiHuDailyNewsEvent(EventManager.ZhiHuDailyNews event) {
-
-
-        if (event == null) {
-            return;
-        }
-
-        MLog.i("onZhiHuDailyNewsEvent");
-
-        if (event == EventManager.ZhiHuDailyNews.ERROR) {
-
-            int error_code = (int) event.getObject();
-            switch (error_code) {
-
-                case ZhiHuHomeContract.NO_LATEST_NEWS_CACHE:
-
-                    presenter.fetchLatestNews();
-                    break;
-                case ZhiHuHomeContract.NO_OLD_NEWS_CACHE:
-                    MLog.i("NO_OLD_NEWS_CACHE");
-                    presenter.fetchOldNews(DateFormat.format("yyyyMMdd", calendar).toString(), ZhiHuHomeContract.ADD_OLD_NEWS);
-                    break;
-            }
-
-
-            return;
-
-        }
-
-        ZhiHuNewsBean bean = (ZhiHuNewsBean) event.getObject();
-
-        if (event == EventManager.ZhiHuDailyNews.GET_LATEST) {
-
-
-            MLog.i("GET_LATEST");
-
-
-            adapter.addData(bean.getCommonNewsModels());
-
-
-            cacheManager.put(GankHomeContract.HOME+DateUtil.getToday(),bean);
-            calendar = Calendar.getInstance();//时间重置回今天
-
-        } else if (event == EventManager.ZhiHuDailyNews.ADD_OLD_NEWS) {
-
-            MLog.i("ADD_OLD_NEWS");
-
-            cacheManager.put(GankHomeContract.HOME+DateUtil.getCurrentDate(calendar),bean);
-            adapter.addData(bean.getCommonNewsModels());
-
-        } else if (event == EventManager.ZhiHuDailyNews.SET_OLD_NEWS) {
-            MLog.i("SET_OLD_NEWS");
-
-
-            adapter.setNewData(bean.getCommonNewsModels());
-            MLog.i("mYear:   " + mYear + "\n" + "mMonth:  " + mMonth + "\n" + "mDay: " + mDay);
-            calendar.set(mYear, mMonth, mDay);//时间重置当前选择的时间
-        }
+    public void setPresenter(ZhiHuHomeContract.Presenter mPresenter) {
 
     }
 
@@ -202,11 +84,13 @@ public class ZhiHuHomeFragment extends EventFragment implements ZhiHuHomeContrac
      */
     private int mDay = 0;
 
+    Calendar now = Calendar.getInstance();
+
     @OnClick(R.id.fab_zhihu)
     public void onClick() {
 
 
-        Calendar now = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
@@ -214,20 +98,20 @@ public class ZhiHuHomeFragment extends EventFragment implements ZhiHuHomeContrac
                 mYear = year;
                 mDay = dayOfMonth;
                 mMonth = monthOfYear;
-
-                presenter.fetchOldNews(DateUtil.convertDateForZhiHuApi(year, monthOfYear, dayOfMonth), ZhiHuHomeContract.SET_OLD_NEWS);
+                mPresenter.getOldNews(DateUtil.convertDateForZhiHuApi(year, monthOfYear, dayOfMonth), ZhiHuHomeContract.SET_OLD_NEWS);
+                //时间重置到当前选择的时间
+                now.set(mYear, mMonth, mDay);
 
             }
-        }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 
         //知乎日报API最早可获取到2013年5月20号的信息
         datePickerDialog.setMinDate(new GregorianCalendar(2013, 4, 20));
 
-        //最多可查看到昨天的信息n
-        now.add(Calendar.DAY_OF_MONTH, -1);
-        datePickerDialog.setMaxDate(now);
 
+        datePickerDialog.setMaxDate(calendar);
         datePickerDialog.show(getFragmentManager(), "Datepickerdialog");
+
 
     }
 
@@ -238,31 +122,47 @@ public class ZhiHuHomeFragment extends EventFragment implements ZhiHuHomeContrac
                 .setAction(getString(R.string.retry), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        presenter.fetchLatestNews();
+                        mPresenter.getLatestNews();
                     }
                 })
                 .show();
     }
 
     @Override
-    public void setupView() {
+    public void setIsLoading(boolean flag) {
 
-        new ZhiHuHomePresenter(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.getLatestNews();
+    }
+
+    @Override
+    protected void initVariable() {
+
+        mPresenter = new ZhiHuHomePresenter(this);
+
+        mAdapter = new ZhiHuRvAdapter(R.layout.item_image_text);
+
+    }
+
+
+    @Override
+    public void initView(Bundle savedInstanceState) {
+
 
         getActivity().findViewById(R.id.tab).setVisibility(View.GONE);
-        adapter =new ZhiHuRvAdapter(getActivity(),new ArrayList<ZhiHuCommonNewsModel>());
+//        getActivity().getActionBar().setTitle("知乎日报");
 
-        cacheManager = new CacheManager<>(getActivity(), AppConfig.ZHIHU_CACHE_NAME, ZhiHuNewsBean.class);
-
-        //获取当前时间
-        calendar = Calendar.getInstance();
 
         //给RecyclerView item设置间距
         int space = getResources().getDimensionPixelOffset(R.dimen.card_spacing);
         rvZhihu.addItemDecoration(new SpaceItemDecoration(space));
         rvZhihu.setHasFixedSize(true);
         rvZhihu.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvZhihu.setAdapter(adapter);
+        rvZhihu.setAdapter(mAdapter);
 
 
     }
@@ -270,39 +170,54 @@ public class ZhiHuHomeFragment extends EventFragment implements ZhiHuHomeContrac
     @Override
     public void initListener() {
 
+        mAdapter.setOnLoadMoreListener(this, rvZhihu);
+        srlZhihu.setOnRefreshListener(this);
 
-        //下拉刷新
-        srlZhihu.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+        mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onRefresh() {
-
-                presenter.fetchLatestNews();
-                srlZhihu.setRefreshing(false);
+            public void onItemClick(BaseQuickAdapter adapter, View view, int i) {
+                List<ZhiHuStories> stories = adapter.getData();
+                startActivity(ZhiHuDetailActivity.newIntent(getActivity(), stories.get(i).getId() + ""));
             }
         });
 
 
-        //上拉刷新
-        rvZhihu.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                //判断是否处于滑动状态并且已经到达了最底部
-                if (newState == RecyclerView.SCROLL_STATE_IDLE
-                        && lastVisibleItemPosition + 1 == rvZhihu.getAdapter().getItemCount()) {
+    }
 
-                    //加载更多
-                    loadMore();
-                }
-            }
+    @Override
+    public void onLoadMoreRequested() {
 
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                //获取最后一个可见Item的位置
-                lastVisibleItemPosition = ((LinearLayoutManager) rvZhihu.getLayoutManager()).findLastVisibleItemPosition();
+        mPresenter.getOldNews(DateUtil.subDateForApi(now), ZhiHuHomeContract.ADD_OLD_NEWS);
 
-            }
-        });
+    }
+
+    @Override
+    public void onRefresh() {
+
+
+        mPresenter.getLatestNews();
+        srlZhihu.setRefreshing(false);
+
+        now = Calendar.getInstance(); //时间重置回今天
+
+    }
+
+    @Override
+    public void bindData(ZhiHuNewsBean bean) {
+        mAdapter.setNewData(bean.getStories());
+    }
+
+    @Override
+    public void bindNewsData(ZhiHuNewsBean bean) {
+
+        if (bean != null && !bean.getStories().isEmpty()) {
+            mAdapter.addData(bean.getStories());
+            mAdapter.loadMoreComplete();
+        } else {
+            mAdapter.loadMoreEnd();
+        }
+
 
     }
 }

@@ -4,6 +4,7 @@
     android:layout_height="168dp">
 
     <ImageView
+        android:scaleType="centerCrop"
         android:id="@+id/iv_item_card"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

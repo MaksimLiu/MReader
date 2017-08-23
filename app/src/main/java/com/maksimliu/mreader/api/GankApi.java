@@ -1,8 +1,10 @@
 package com.maksimliu.mreader.api;
 
-import com.maksimliu.mreader.entity.GankHomeBean;
-import com.maksimliu.mreader.entity.GankCategoryBean;
+import com.maksimliu.mreader.bean.BaseGankBean;
+import com.maksimliu.mreader.bean.GankCategoryBean;
+import com.maksimliu.mreader.bean.GankHomeBean;
 
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -21,7 +23,7 @@ public interface GankApi {
 
     String IOS_CATEGORY_TYPE = "iOS";
 
-    String EXTRA_RESOURCE_CATEGORY_TYPE = "拓展资源";
+    String EXTRAS_CATEGORY_TYPE = "拓展资源";
 
     String FRONT_END_CATEGORY_TYPE = "前端";
 
@@ -51,6 +53,6 @@ public interface GankApi {
      */
 
     @GET("data/{category}/20/{page}")
-    Call<GankCategoryBean> getCategoryGank(@Path("category") String category, @Path("page") String page);
+    Observable<BaseGankBean<GankCategoryBean>> getCategoryGank(@Path("category") String category, @Path("page") int page);
 
 }

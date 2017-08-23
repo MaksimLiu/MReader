@@ -2,11 +2,8 @@ package com.maksimliu.mreader;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 
 import android.view.Display;
@@ -20,7 +17,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.maksimliu.mreader.base.BaseActivity;
-import com.maksimliu.mreader.common.AppConfig;
 import com.maksimliu.mreader.utils.FileUtil;
 import com.maksimliu.mreader.utils.MLog;
 
@@ -51,6 +47,11 @@ public class PhotoViewerActivity extends BaseActivity {
 
 
     @Override
+    protected void initVariable() {
+
+    }
+
+    @Override
     protected void initListener() {
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -63,7 +64,7 @@ public class PhotoViewerActivity extends BaseActivity {
     }
 
     @Override
-    protected void initView() {
+    protected void initView(Bundle savedInstanceState) {
 
         ButterKnife.bind(this);
 
@@ -102,10 +103,7 @@ public class PhotoViewerActivity extends BaseActivity {
         getWindow().setAttributes(p);
     }
 
-    @Override
-    protected void afterCreate(Bundle savedInstanceState) {
 
-    }
 
     @Override
     protected int getLayoutId() {

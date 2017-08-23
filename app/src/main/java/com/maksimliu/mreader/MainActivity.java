@@ -14,16 +14,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.maksimliu.mreader.base.EventActivity;
-import com.maksimliu.mreader.entity.ZhiHuNewsBean;
-import com.maksimliu.mreader.gank.GankFragment;
+import com.maksimliu.mreader.base.BaseRxActivity;
+import com.maksimliu.mreader.gank.GankCatogoryFragment;
 import com.maksimliu.mreader.utils.FragmentUtil;
 import com.maksimliu.mreader.zhihudaily.ZhiHuHomeFragment;
 
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-public class MainActivity extends EventActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends BaseRxActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
     private Toolbar toolbar;
@@ -31,9 +27,9 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
 
     private ZhiHuHomeFragment zhiHuDailyHomeFragment;
 
-    private GankFragment gankFragment;
+    private GankCatogoryFragment gankCatogoryFragment;
 
-    private  DrawerLayout drawer;
+    private DrawerLayout drawer;
 
     private Fragment currentFragment;
 
@@ -41,36 +37,31 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
 
 
     @Override
+    protected void initVariable() {
+
+    }
+
+    @Override
     protected void initListener() {
 
     }
 
     @Override
-    protected void initView() {
+    protected void initView(Bundle savedInstanceState) {
         initDrawer();
         initFragment();
-    }
-
-    @Override
-    protected void afterCreate(Bundle savedInstanceState) {
-
-
-
         if (savedInstanceState == null) {
 
-
             FragmentUtil.addFragment(getFragmentManager(), zhiHuDailyHomeFragment);
-
-
+            currentFragment = zhiHuDailyHomeFragment;
         }
-
-        currentFragment = zhiHuDailyHomeFragment;
     }
+
 
     private void initFragment() {
 
         zhiHuDailyHomeFragment = new ZhiHuHomeFragment();
-        gankFragment=new GankFragment();
+        gankCatogoryFragment = new GankCatogoryFragment();
 
     }
 
@@ -78,7 +69,7 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        drawer= (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         DrawerMenuToggle toggle = new DrawerMenuToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -98,14 +89,14 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        menuItem=item;
+        menuItem = item;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     private void handleNavItemSelected(MenuItem item) {
-        TabLayout tabLayout=((TabLayout)findViewById(R.id.tab));
+        TabLayout tabLayout = ((TabLayout) findViewById(R.id.tab));
 
         switch (item.getItemId()) {
 
@@ -128,16 +119,16 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
                 tabLayout.setVisibility(View.VISIBLE);
                 toolbar.setTitle(R.string.gank);
 
-                if (currentFragment == gankFragment) {
+                if (currentFragment == gankCatogoryFragment) {
                     break;
                 }
-                FragmentUtil.switchFragment(currentFragment, gankFragment);
-                currentFragment = gankFragment;
+                FragmentUtil.switchFragment(currentFragment, gankCatogoryFragment);
+                currentFragment = gankCatogoryFragment;
 
                 break;
 
             case R.id.nav_setting:
-                startActivity(new Intent(MainActivity.this,SettingsActivity.class));
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 break;
             case R.id.nav_about:
                 startActivity(new Intent(MainActivity.this, AboutActivity.class));
@@ -148,7 +139,7 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
         }
     }
 
-    public class DrawerMenuToggle extends ActionBarDrawerToggle{
+    public class DrawerMenuToggle extends ActionBarDrawerToggle {
 
         public DrawerMenuToggle(Activity activity, DrawerLayout drawerLayout, Toolbar toolbar, @StringRes int openDrawerContentDescRes, @StringRes int closeDrawerContentDescRes) {
             super(activity, drawerLayout, toolbar, openDrawerContentDescRes, closeDrawerContentDescRes);
@@ -157,14 +148,11 @@ public class MainActivity extends EventActivity implements NavigationView.OnNavi
         @Override
         public void onDrawerClosed(View drawerView) {
             super.onDrawerClosed(drawerView);
-            handleNavItemSelected(menuItem);
+          if (menuItem!=null){
+              handleNavItemSelected(menuItem);
+          }
 
         }
     }
 
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMainEvent(ZhiHuNewsBean latest) {
-
-    }
 }

@@ -14,7 +14,6 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.maksimliu.mreader.base.BaseActivity;
-import com.maksimliu.mreader.utils.MLog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,7 +49,7 @@ public class BrowserActivity extends BaseActivity {
     }
 
     @Override
-    protected void initView() {
+    protected void initView(Bundle savedInstanceState) {
         ButterKnife.bind(this);
 
         wvGank.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
@@ -67,11 +66,6 @@ public class BrowserActivity extends BaseActivity {
             }
         });
 
-
-    }
-
-    @Override
-    protected void afterCreate(Bundle savedInstanceState) {
 
         loadUrl = getIntent().getStringExtra("url");
         String title = getIntent().getStringExtra("title");
@@ -110,9 +104,8 @@ public class BrowserActivity extends BaseActivity {
 
 
         });
-
-
     }
+
 
     @Override
     protected int getLayoutId() {
@@ -120,12 +113,9 @@ public class BrowserActivity extends BaseActivity {
     }
 
 
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
+    protected void initVariable() {
+
     }
 
     @Override

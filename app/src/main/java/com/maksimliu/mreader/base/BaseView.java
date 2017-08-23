@@ -8,10 +8,11 @@ package com.maksimliu.mreader.base;
 public interface BaseView<T> {
 
 
-    void setPresenter(T presnter);
+    void setPresenter(T mPresenter);
 
     void showError(String errorMsg);
 
+    void setIsLoading(boolean flag);
 
 
 }

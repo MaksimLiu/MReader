@@ -1,14 +1,12 @@
 package com.maksimliu.mreader.zhihudaily;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -18,21 +16,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.maksimliu.mreader.R;
-import com.maksimliu.mreader.base.EventActivity;
-import com.maksimliu.mreader.common.AppConfig;
-import com.maksimliu.mreader.entity.ZhiHuDetailBean;
-import com.maksimliu.mreader.event.EventManager;
-import com.maksimliu.mreader.utils.CacheManager;
-import com.maksimliu.mreader.utils.MLog;
-
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import com.maksimliu.mreader.base.BaseRxActivity;
+import com.maksimliu.mreader.bean.ZhiHuDetailBean;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailContract.View {
+public class ZhiHuDetailActivity extends BaseRxActivity implements ZhiHuDetailContract.View, SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.toolbar_zhihu_detail)
     Toolbar toolbarZhihuDetail;
@@ -47,42 +36,44 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
     @BindView(R.id.tv_image_source)
     TextView tvImageSource;
 
-
-
-    private ZhiHuDetailContract.Presenter presenter;
-
-
-    private CacheManager<ZhiHuDetailBean> cacheManager;
-
     /**
      * 当前阅读的新闻ID
      */
     private String newsId;
 
+
+    private ZhiHuDetailPresenter mPresenter;
+
+
+    public static Intent newIntent(Context context, String newsId) {
+
+        Intent intent = new Intent(context, ZhiHuDetailActivity.class);
+        intent.putExtra("newsId", newsId);
+        return intent;
+    }
+
+
     @Override
     protected void initListener() {
 
-        srlZhihuDetail.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-                presenter.loadNewsDetail(newsId);
-                srlZhihuDetail.setRefreshing(false);
-            }
-        });
+        srlZhihuDetail.setOnRefreshListener(this);
     }
 
     @Override
-    protected void initView() {
+    protected void initVariable() {
 
-        new ZhiHuDetailPresenter(this);
-        ButterKnife.bind(this);
+        newsId = getIntent().getStringExtra("newsId");
+
+        mPresenter = new ZhiHuDetailPresenter(this);
+    }
+
+    @Override
+    protected void initView(Bundle savedInstanceState) {
 
         setSupportActionBar(toolbarZhihuDetail);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
 
-        cacheManager = new CacheManager<>(this, AppConfig.ZHIHU_CACHE_NAME, ZhiHuDetailBean.class);
         wvZhihuDetail.setWebChromeClient(new WebChromeClient());
         wvZhihuDetail.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         wvZhihuDetail.getSettings().setSupportZoom(false);//禁用放大缩小
@@ -90,16 +81,8 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
         wvZhihuDetail.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);//优先使用缓存
 
 
-
     }
 
-    @Override
-    protected void afterCreate(Bundle savedInstanceState) {
-
-        newsId = getIntent().getStringExtra("newsId");
-        MLog.i(newsId);
-
-    }
 
     @Override
     protected int getLayoutId() {
@@ -108,61 +91,12 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
 
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        presenter.loadNewsDetail(newsId);
+    protected void loadData() {
+        super.loadData();
+        onRefresh();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onZhiHuNewsDetailEvent(EventManager.ZhiHuNewsDetail event) {
-
-        MLog.i("onZhiHuNewsDetail");
-        if (event == null) {
-            return;
-        }
-
-
-        if (event == EventManager.ZhiHuNewsDetail.ERROR) {
-            int error_code = (int) event.getObject();
-            switch (error_code) {
-
-                case ZhiHuDetailContract.NO_DETAIL_CACHE:
-                    presenter.fetchNewsDetail(newsId);
-                    break;
-            }
-
-            return;
-        }
-
-        if (event == EventManager.ZhiHuNewsDetail.GET_DETAIL) {
-
-            MLog.i("onZhiHuNewsDetail GET_DETAIL");
-            ZhiHuDetailBean bean = (ZhiHuDetailBean) event.getObject();
-
-
-            cacheManager.put(ZhiHuDetailContract.ZHIHU_DETAIL_NEWS + newsId, bean);
-
-            Glide.with(this).load(bean.getImage()).into(ivZhihuDetail); //更新顶部图片
-
-            toolbarZhihuDetailLayout.setTitle(bean.getTitle());//新闻标题
-
-            tvImageSource.setText(bean.getImage_source());//图片来源
-
-            newsId = String.valueOf(bean.getId());//新闻ID
-
-            showHTML(bean.getBody());
-        }
-
-
-    }
-
-
-
-
-
-    @Override
-    public void setPresenter(ZhiHuDetailContract.Presenter presnter) {
-        this.presenter = presnter;
+    public void setPresenter(ZhiHuDetailContract.Presenter mPresenter) {
     }
 
     @Override
@@ -172,9 +106,14 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
                 .setAction("重试", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        presenter.fetchNewsDetail(newsId);
+                        mPresenter.getNewsDetail(newsId);
                     }
                 }).show();
+
+    }
+
+    @Override
+    public void setIsLoading(boolean flag) {
 
     }
 
@@ -182,36 +121,30 @@ public class ZhiHuDetailActivity extends EventActivity implements ZhiHuDetailCon
     @Override
     public void showHTML(String body) {
 
-        StringBuilder css = new StringBuilder();
-
-        //添加引用本地CSS文件
-        css.append("<link rel=\"stylesheet\" href=\"");
-        css.append("file:///android_asset/zhihudaily_detail.css");
-        css.append("\" type=\"text/css\" />");
-
-
-        //补充完整HTML代码
-        StringBuilder html = new StringBuilder();
-
-        html.append("<!DOCTYPE HTML>\n")
-                .append("<html>\n<head>\n <meta charset=\"utf-8\" />\n")
-                .append(css.toString())
-                .append("\n</head>\n<body")
-                .append(body)
-                .append("</body>\n<html>");
-
         //  wvZhihuDetail.loadData("","text/html","utf-8");
         //加载本地HTML内容，PS:以上的处理方式，在4.0以上加载中文会出现乱码
-        wvZhihuDetail.loadDataWithBaseURL("file:///android_asset/", html.toString(), "text/html;utf-8", null, null);
+        wvZhihuDetail.loadDataWithBaseURL("file:///android_asset/", body, "text/html;utf-8", null, null);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
+    public void bindData(ZhiHuDetailBean bean) {
+
+        showHTML(mPresenter.processHtmlContent(bean.getBody()));
+
+        tvImageSource.setText(bean.getImage_source());
+        Glide.with(this).load(bean.getImages().get(0)).into(ivZhihuDetail);
+        toolbarZhihuDetail.setTitle(bean.getTitle());
+        toolbarZhihuDetailLayout.setTitle(bean.getTitle());
+
+
     }
 
 
+    @Override
+    public void onRefresh() {
 
+        mPresenter.getNewsDetail(newsId);
+        srlZhihuDetail.setRefreshing(false);
+
+    }
 }

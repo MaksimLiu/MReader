@@ -1,20 +1,11 @@
 package com.maksimliu.mreader.zhihudaily;
 
-import com.maksimliu.mreader.MReaderApplication;
 import com.maksimliu.mreader.api.ZhiHuDailyApi;
-import com.maksimliu.mreader.common.AppConfig;
-import com.maksimliu.mreader.entity.ZhiHuDetailBean;
-import com.maksimliu.mreader.event.EventManager;
-import com.maksimliu.mreader.network.RetrofitHelper;
-import com.maksimliu.mreader.utils.CacheManager;
-import com.maksimliu.mreader.utils.MLog;
-
-import org.greenrobot.eventbus.EventBus;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
+import com.maksimliu.mreader.bean.ZhiHuDetailBean;
+import com.maksimliu.mreader.network.GankHttpRequest;
+import com.maksimliu.mreader.network.ZhihuHttpRequest;
+import com.maksimliu.mreader.rx.BaseZhiHuObserver;
+import com.maksimliu.mreader.rx.RxSchedulers;
 
 /**
  * Created by MaksimLiu on 2017/3/19.
@@ -27,74 +18,71 @@ public class ZhiHuDetailPresenter implements ZhiHuDetailContract.Presenter {
 
     private ZhiHuDailyApi zhiHuDailyApi;
 
-    private CacheManager<ZhiHuDetailBean> cacheManager;
+    private RxSchedulers rxSchedulers;
 
 
     public ZhiHuDetailPresenter(ZhiHuDetailContract.View view) {
 
         this.view = view;
-        view.setPresenter(this);
 
-        Retrofit retrofit = RetrofitHelper.create(ZhiHuDailyApi.BASE_API_4_URL);
-        zhiHuDailyApi = retrofit.create(ZhiHuDailyApi.class);
+        zhiHuDailyApi = ZhihuHttpRequest.create(ZhiHuDailyApi.class);
 
-        cacheManager = new CacheManager<>(MReaderApplication.getContext(), AppConfig.ZHIHU_CACHE_NAME, ZhiHuDetailBean.class);
+        rxSchedulers = new RxSchedulers();
+
 
     }
 
     @Override
-    public void start() {
+    public void subscribe() {
 
     }
 
     @Override
-    public void stop() {
+    public void unsubscribe() {
 
     }
 
     @Override
-    public void fetchNewsDetail(String id) {
+    public void getNewsDetail(String id) {
 
-        final EventManager.ZhiHuNewsDetail event = EventManager.ZhiHuNewsDetail.GET_DETAIL;
+        zhiHuDailyApi.getNewsDetail(id)
+                .compose(rxSchedulers.<ZhiHuDetailBean>transformer())
+                .subscribe(new BaseZhiHuObserver<ZhiHuDetailBean>() {
+                    @Override
+                    protected void onSuccess(ZhiHuDetailBean zhiHuDetailBean) {
+                        view.bindData(zhiHuDetailBean);
+                    }
 
-        Call<ZhiHuDetailBean> latestCall = zhiHuDailyApi.getNewsDetail(id);
+                    @Override
+                    protected void onError(String errorMsg) {
 
-        latestCall.enqueue(new Callback<ZhiHuDetailBean>() {
-            @Override
-            public void onResponse(Call<ZhiHuDetailBean> call, Response<ZhiHuDetailBean> response) {
-
-                event.setObject(response.body());
-                EventBus.getDefault().post(event);
-            }
-
-            @Override
-            public void onFailure(Call<ZhiHuDetailBean> call, Throwable t) {
-
-
-                view.showError("加载失败 " + t.getMessage());
-
-            }
-        });
+                        view.showError(errorMsg);
+                    }
+                });
     }
 
     @Override
-    public void loadNewsDetail(String id) {
-        MLog.i("loadNewsDetail");
+    public String processHtmlContent(String body) {
 
-        ZhiHuDetailBean bean = cacheManager.get(ZhiHuDetailContract.ZHIHU_DETAIL_NEWS + id);
-        if (bean != null) {
+        StringBuilder css = new StringBuilder();
 
-            EventManager.ZhiHuNewsDetail detailEvent = EventManager.ZhiHuNewsDetail.GET_DETAIL;
-            detailEvent.setObject(bean);
-            EventBus.getDefault().post(detailEvent);
+        //添加引用本地CSS文件
+        css.append("<link rel=\"stylesheet\" href=\"");
+        css.append("file:///android_asset/zhihudaily_detail.css");
+        css.append("\" type=\"text/css\" />");
 
-        } else {
 
-            MLog.i("Error");
+        //补充完整HTML代码
+        StringBuilder html = new StringBuilder();
 
-            EventManager.ZhiHuNewsDetail errorEvent = EventManager.ZhiHuNewsDetail.ERROR;
-            errorEvent.setObject(ZhiHuDetailContract.NO_DETAIL_CACHE);
-            EventBus.getDefault().post(errorEvent);
-        }
+        html.append("<!DOCTYPE HTML>\n")
+                .append("<html>\n<head>\n <meta charset=\"utf-8\" />\n")
+                .append(css.toString())
+                .append("\n</head>\n<body")
+                .append(body)
+                .append("</body>\n<html>");
+
+        return html.toString();
     }
+
 }

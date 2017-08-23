@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
+        classpath 'com.android.tools.build:gradle:2.3.3'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -37,7 +37,7 @@ ext {
     okhttpVersion='3.6.0'
     butterKnifeVersion='8.5.1'
     convertGson='2.1.0'
-    baseRecyclerviewAdapterHelperVersion='2.8.6'
+    baseRecyclerviewAdapterHelperVersion='2.9.27'
     constraintlayoutVerison='1.0.0-beta4'
 
 }

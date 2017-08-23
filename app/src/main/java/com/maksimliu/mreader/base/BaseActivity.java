@@ -12,27 +12,38 @@ import com.maksimliu.mreader.common.AppConfig;
 import com.maksimliu.mreader.utils.MLog;
 import com.umeng.analytics.MobclickAgent;
 
+import butterknife.ButterKnife;
+
 /**
  * Created by MaksimLiu on 2017/3/3.
  */
 
 public abstract class BaseActivity extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
-        initView();
+        ButterKnife.bind(this);
+        initVariable();
+        initView(savedInstanceState);
+
         initListener();
-        checkForAppPermission();
-        afterCreate(savedInstanceState);
 
     }
+
+    protected abstract void initVariable();
 
     @Override
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+        loadData();
+    }
+
+    protected void loadData() {
+
     }
 
     @Override
@@ -41,13 +52,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         MobclickAgent.onPause(this);
     }
 
-    protected abstract void initListener();
-
-    protected abstract void initView();
-
+    protected void initListener() {
+    }
 
 
-    protected abstract void afterCreate(Bundle savedInstanceState);
+    protected void initView(Bundle savedInstanceState) {
+    }
 
     protected abstract int getLayoutId();
 
@@ -64,7 +74,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onKeyDown(keyCode, event);
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 
-            MLog.i("onKeyDown   "+getSupportFragmentManager().getBackStackEntryCount());
+            MLog.i("onKeyDown   " + getSupportFragmentManager().getBackStackEntryCount());
             //当后退栈最后一个Fragment执行返回键时，结束Activity，避免空白页面
             if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
                 finish();
@@ -89,11 +99,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         int readPhoneStatePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
         if (writePermission == PackageManager.PERMISSION_GRANTED) {
             return true;
-        }
-        else if (readPhoneStatePermission==PackageManager.PERMISSION_GRANTED){
+        } else if (readPhoneStatePermission == PackageManager.PERMISSION_GRANTED) {
             return true;
-        }
-        else {
+        } else {
             requestForAppPermission();
         }
         return false;

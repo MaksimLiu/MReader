@@ -7,22 +7,22 @@ import com.maksimliu.mreader.base.BaseActivity;
 public class SettingsActivity extends BaseActivity {
 
     @Override
+    protected void initVariable() {
+
+    }
+
+    @Override
     protected void initListener() {
 
 
     }
 
     @Override
-    protected void initView() {
+    protected void initView(Bundle savedInstanceState) {
 
     }
 
-    @Override
-    protected void afterCreate(Bundle savedInstanceState) {
 
-//        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
 
     @Override
     protected int getLayoutId() {
