@@ -11,21 +11,12 @@ import android.support.v4.view.ViewPager;
 
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.base.BaseFragment;
-import com.maksimliu.mreader.gank.android.GankAndroidContract;
 import com.maksimliu.mreader.gank.android.GankAndroidFragment;
-import com.maksimliu.mreader.gank.android.GankAndroidPresenter;
-import com.maksimliu.mreader.gank.extras.GankExtrasContract;
 import com.maksimliu.mreader.gank.extras.GankExtrasFragment;
-import com.maksimliu.mreader.gank.extras.GankExtrasPresenter;
-import com.maksimliu.mreader.gank.frontend.GankFrontEndContract;
 import com.maksimliu.mreader.gank.frontend.GankFrontEndFragment;
-import com.maksimliu.mreader.gank.frontend.GankFrontEndPresenter;
 import com.maksimliu.mreader.gank.ios.GankIOSFragment;
-import com.maksimliu.mreader.gank.ios.GankiOSPresenter;
 import com.maksimliu.mreader.gank.meizhi.GankFuLiFragment;
-import com.maksimliu.mreader.gank.meizhi.GankFuliPresenter;
 import com.maksimliu.mreader.gank.others.GankOthersFragment;
-import com.maksimliu.mreader.gank.others.GankOthersPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,19 +42,7 @@ public class GankCatogoryFragment extends BaseFragment {
 
     private GankOthersFragment othersFragment;
 
-    private GankFrontEndPresenter frontEndPresenter;
-
-    private GankExtrasPresenter extrasPresenter;
-
     private GankFuLiFragment fuLiFragment;
-
-    private GankFuliPresenter fuliPresenter;
-
-    private GankAndroidPresenter androidPresenter;
-
-    private GankOthersPresenter othersPresenter;
-
-    private GankiOSPresenter iosPresenter;
 
 
     public GankCatogoryFragment() {
@@ -81,23 +60,16 @@ public class GankCatogoryFragment extends BaseFragment {
     protected void initVariable() {
 
         androidFragment = GankAndroidFragment.newInstance();
-        androidPresenter = new GankAndroidPresenter(androidFragment);
 
         frontEndFragment = GankFrontEndFragment.newInstance();
-        frontEndPresenter = new GankFrontEndPresenter(frontEndFragment);
 
         extrasFragment = GankExtrasFragment.newInstance();
-        extrasPresenter = new GankExtrasPresenter(extrasFragment);
 
         iosFragment = GankIOSFragment.newInstance();
-        iosPresenter = new GankiOSPresenter(iosFragment);
 
         fuLiFragment = GankFuLiFragment.newInstance();
-        fuliPresenter = new GankFuliPresenter(fuLiFragment);
 
         othersFragment = GankOthersFragment.newInstance();
-        othersPresenter = new GankOthersPresenter(othersFragment);
-
 
     }
 
@@ -165,6 +137,8 @@ public class GankCatogoryFragment extends BaseFragment {
                     break;
                 case 5:
                     fragment = fuLiFragment;
+                    break;
+                default:
                     break;
             }
             return fragment;

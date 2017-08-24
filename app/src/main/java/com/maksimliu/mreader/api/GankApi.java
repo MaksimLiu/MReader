@@ -2,7 +2,6 @@ package com.maksimliu.mreader.api;
 
 import com.maksimliu.mreader.bean.BaseGankBean;
 import com.maksimliu.mreader.bean.GankCategoryBean;
-import com.maksimliu.mreader.bean.GankHomeBean;
 
 import io.reactivex.Observable;
 import retrofit2.Call;
@@ -31,18 +30,6 @@ public interface GankApi {
 
     String FULI_CATEGORY_TYPE = "福利";
 
-    /**
-     * 获取每天的干货
-     *
-     * @param year  年
-     * @param month 月
-     * @param day   日
-     * @return JSON
-     */
-    @GET("history/content/day/{year}/{month}/{day}")
-    Call<GankHomeBean> getEveryDayGank(@Path("year") String year,
-                                       @Path("month") String month,
-                                       @Path("day") String day);
 
     /**
      * 获取某个类别下的干货

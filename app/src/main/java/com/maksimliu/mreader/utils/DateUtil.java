@@ -20,7 +20,6 @@ import java.util.Date;
 public class DateUtil {
 
 
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 
     /**
@@ -57,16 +56,6 @@ public class DateUtil {
 
     }
 
-    public static String getToday() {
-
-        return DateFormat.format("yyyy-MM-dd", new Date()).toString();
-
-    }
-
-    public static String getCurrentDate(Calendar calendar) {
-
-        return DateFormat.format("yyyy-MM-dd", calendar).toString();
-    }
 
 
     public static String convertDate(int date) {

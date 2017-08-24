@@ -1,33 +1,37 @@
-package com.maksimliu.mreader.gank.frontend;
+package com.maksimliu.mreader.gank;
 
 import com.maksimliu.mreader.api.GankApi;
 import com.maksimliu.mreader.bean.BaseGankBean;
 import com.maksimliu.mreader.bean.GankCategoryBean;
-import com.maksimliu.mreader.gank.extras.GankExtrasContract;
 import com.maksimliu.mreader.network.GankHttpRequest;
 import com.maksimliu.mreader.rx.BaseGankObserver;
 import com.maksimliu.mreader.rx.RxSchedulers;
+import com.maksimliu.mreader.utils.MLog;
 
 import java.util.List;
 
 /**
- * Created by MaksimLiu on 2017/8/23.
+ * Created by MaksimLiu on 2017/8/24.
  */
 
-public class GankFrontEndPresenter implements GankFrontEndContract.Presenter {
+public class GankCategoryPresenter implements GankCategoryContract.Presenter {
 
-    private GankApi gankApi;
+
+    private GankCategoryContract.View mView;
 
     private RxSchedulers rxSchedulers;
 
-    private GankFrontEndContract.View mView;
+    private GankApi gankApi;
 
-    public GankFrontEndPresenter(GankExtrasContract.View view) {
+
+    public GankCategoryPresenter(GankCategoryContract.View view) {
+
         this.mView = view;
-        view.setPresenter(this);
-        gankApi = GankHttpRequest.create(GankApi.class);
+        mView.setPresenter(this);
         rxSchedulers = new RxSchedulers();
+        gankApi = GankHttpRequest.create(GankApi.class);
     }
+
 
     @Override
     public void subscribe() {
@@ -42,14 +46,15 @@ public class GankFrontEndPresenter implements GankFrontEndContract.Presenter {
     @Override
     public void fetchCategory(String category, int page) {
 
-
         gankApi.getCategoryGank(category, page)
                 .compose(rxSchedulers.<BaseGankBean<GankCategoryBean>>transformer())
                 .subscribe(new BaseGankObserver<GankCategoryBean>() {
                     @Override
                     protected void onSuccess(List<GankCategoryBean> data) {
+
                         mView.bindData(data);
                         mView.setIsLoading(false);
+                        MLog.i(mView.getClass().getSimpleName());
                     }
 
                     @Override
@@ -58,6 +63,5 @@ public class GankFrontEndPresenter implements GankFrontEndContract.Presenter {
                         mView.showError(errorMsg);
                     }
                 });
-
     }
 }

@@ -3,13 +3,15 @@ package com.maksimliu.mreader.views.adapter;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.support.customtabs.CustomTabsIntent;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.maksimliu.mreader.BrowserActivity;
 import com.maksimliu.mreader.PhotoViewerActivity;
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.bean.GankCategoryBean;
@@ -27,7 +29,6 @@ public class GankNewsAdapter extends BaseMultiItemQuickAdapter<GankCategoryBean,
 
 
     private Context context;
-
 
 
     private List<GankCategoryBean> models;
@@ -48,8 +49,8 @@ public class GankNewsAdapter extends BaseMultiItemQuickAdapter<GankCategoryBean,
         addItemType(TEXT_VIEW_TYPE, R.layout.item_gank_category_text);
         addItemType(IMAGE_TEXT_VIEW_TYPE, R.layout.item_gank_category_image_text);
 
-
     }
+
 
     @Override
     protected void convert(final BaseViewHolder helper, final GankCategoryBean item) {
@@ -59,30 +60,11 @@ public class GankNewsAdapter extends BaseMultiItemQuickAdapter<GankCategoryBean,
                 helper.setText(R.id.tv_gank_category_title, item.getDesc());
                 helper.setText(R.id.tv_gank_category_author, item.getWho());
 
-                helper.setOnClickListener(R.id.card_gank_category_text, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(context, BrowserActivity.class);
-                        intent.putExtra("url", item.getUrl());
-                        intent.putExtra("title", item.getDesc());
-                        context.startActivity(intent);
-                    }
-                });
                 break;
             case IMAGE_TEXT_VIEW_TYPE:
                 helper.setText(R.id.tv_gank_category_title, item.getDesc());
                 helper.setText(R.id.tv_gank_category_author, item.getWho());
 
-                helper.setOnClickListener(R.id.card_gank_category_image, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(context, BrowserActivity.class);
-                        intent.putExtra("url", item.getUrl());
-                        intent.putExtra("title", item.getDesc());
-                        context.startActivity(intent);
-
-                    }
-                });
 
                 helper.setOnClickListener(R.id.iv_gank_category, new View.OnClickListener() {
                     @Override
@@ -96,7 +78,30 @@ public class GankNewsAdapter extends BaseMultiItemQuickAdapter<GankCategoryBean,
                 });
                 Glide.with(context).load(item.getImages().get(0)).into((ImageView) helper.getView(R.id.iv_gank_category));
                 break;
+            default:
+                break;
         }
+
+        setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int i) {
+
+
+                startCustomTabs(item.getUrl());
+
+            }
+        });
+    }
+
+    private void startCustomTabs(String url) {
+
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        builder.setShowTitle(true);
+        builder.setToolbarColor(mContext.getResources().getColor(R.color.colorPrimary));
+        builder.addDefaultShareMenuItem();
+        builder.setStartAnimations(mContext, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+        CustomTabsIntent customTabsIntent = builder.build();
+        customTabsIntent.launchUrl(mContext, Uri.parse(url));
     }
 }
 

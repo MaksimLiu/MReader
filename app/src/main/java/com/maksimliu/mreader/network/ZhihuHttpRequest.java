@@ -2,7 +2,7 @@ package com.maksimliu.mreader.network;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.maksimliu.mreader.BuildConfig;
-import com.maksimliu.mreader.MReaderApplication;
+import com.maksimliu.mreader.App;
 import com.maksimliu.mreader.api.ZhiHuDailyApi;
 
 import java.util.concurrent.TimeUnit;
@@ -58,7 +58,7 @@ public class ZhihuHttpRequest {
 
 
         //10M缓存空间
-        Cache cache = new Cache(MReaderApplication.getContext().getExternalCacheDir(), 10 * 1024 * 1024);
+        Cache cache = new Cache(App.getContext().getExternalCacheDir(), 10 * 1024 * 1024);
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .addNetworkInterceptor(new CacheInterceptor()).cache(cache)

@@ -1,8 +1,11 @@
 package com.maksimliu.mreader.utils;
 
+import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import com.maksimliu.mreader.R;
 
 /**
  * Created by MaksimLiu on 2017/3/5.
@@ -24,10 +27,19 @@ public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
      */
     private int right;
 
+    private int DEFAULT_SPACE_SIZE;
+
     public SpaceItemDecoration(int space) {
         this.top = space;
         this.left = space;
         this.right = space;
+    }
+
+    public SpaceItemDecoration(Context context) {
+        DEFAULT_SPACE_SIZE = context.getResources().getDimensionPixelSize(R.dimen.card_spacing);
+        this.top = DEFAULT_SPACE_SIZE;
+        this.left = DEFAULT_SPACE_SIZE;
+        this.right = DEFAULT_SPACE_SIZE;
     }
 
     @Override

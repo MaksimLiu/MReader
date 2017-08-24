@@ -14,6 +14,8 @@ import com.maksimliu.mreader.api.GankApi;
 import com.maksimliu.mreader.base.LazyLoadFragment;
 import com.maksimliu.mreader.bean.GankCategoryBean;
 import com.maksimliu.mreader.gank.GankCategoryContract;
+import com.maksimliu.mreader.gank.GankCategoryPresenter;
+import com.maksimliu.mreader.utils.SpaceItemDecoration;
 import com.maksimliu.mreader.views.adapter.GankNewsAdapter;
 
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ import butterknife.BindView;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class GankIOSFragment extends LazyLoadFragment implements GankiOSContract.View, BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
+public class GankIOSFragment extends LazyLoadFragment implements GankCategoryContract.View, BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
 
 
     @BindView(R.id.recyclerView)
@@ -36,13 +38,12 @@ public class GankIOSFragment extends LazyLoadFragment implements GankiOSContract
         // Required empty public constructor
     }
 
-    public static GankIOSFragment newInstance(){
+    public static GankIOSFragment newInstance() {
         return new GankIOSFragment();
     }
 
 
-
-    private GankiOSContract.Presenter mPresenter;
+    private GankCategoryContract.Presenter mPresenter;
 
 
     private GankNewsAdapter adapter;
@@ -66,6 +67,11 @@ public class GankIOSFragment extends LazyLoadFragment implements GankiOSContract
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(new SpaceItemDecoration(getActivity()));
+
+
+        mPresenter = new GankCategoryPresenter(this);
+
 
     }
 

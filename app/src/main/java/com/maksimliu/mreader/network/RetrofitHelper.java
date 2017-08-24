@@ -1,6 +1,6 @@
 package com.maksimliu.mreader.network;
 
-import com.maksimliu.mreader.MReaderApplication;
+import com.maksimliu.mreader.App;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -19,7 +19,7 @@ public class RetrofitHelper {
 
     public static Retrofit create(String baseUrl) {
 
-        File cacheFile = new File(MReaderApplication.getContext().getExternalCacheDir(), "mreader");
+        File cacheFile = new File(App.getContext().getExternalCacheDir(), "mreader");
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(8, TimeUnit.SECONDS)
                 .readTimeout(5, TimeUnit.SECONDS)

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.maksimliu.mreader.MReaderApplication;
+import com.maksimliu.mreader.App;
 
 /**
  * Created by MaksimLiu on 2017/3/4.
@@ -25,7 +25,7 @@ public class NetworkState {
      */
     private static NetworkInfo getNetworkInfo() {
 
-        return ((ConnectivityManager) MReaderApplication.getContext()
+        return ((ConnectivityManager) App.getContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
     }
 

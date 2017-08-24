@@ -14,6 +14,8 @@ import com.maksimliu.mreader.api.GankApi;
 import com.maksimliu.mreader.base.LazyLoadFragment;
 import com.maksimliu.mreader.bean.GankCategoryBean;
 import com.maksimliu.mreader.gank.GankCategoryContract;
+import com.maksimliu.mreader.gank.GankCategoryPresenter;
+import com.maksimliu.mreader.utils.SpaceItemDecoration;
 import com.maksimliu.mreader.views.adapter.GankNewsAdapter;
 
 import java.util.ArrayList;
@@ -65,6 +67,11 @@ public class GankFrontEndFragment extends LazyLoadFragment implements GankCatego
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(new SpaceItemDecoration(getActivity()));
+
+
+        mPresenter=new GankCategoryPresenter(this);
+
 
     }
 

@@ -8,19 +8,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateFormat;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.base.BaseRxFragment;
-import com.maksimliu.mreader.base.EventFragment;
 import com.maksimliu.mreader.bean.ZhiHuNewsBean;
 import com.maksimliu.mreader.bean.ZhiHuStories;
 import com.maksimliu.mreader.utils.DateUtil;
-import com.maksimliu.mreader.utils.MLog;
 import com.maksimliu.mreader.utils.SpaceItemDecoration;
-import com.maksimliu.mreader.views.adapter.ZhiHuRvAdapter;
+import com.maksimliu.mreader.views.adapter.ZhiHuNewsAdapter;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.Calendar;
@@ -46,7 +43,7 @@ public class ZhiHuHomeFragment extends BaseRxFragment implements ZhiHuHomeContra
 
     private ZhiHuHomePresenter mPresenter;
 
-    private ZhiHuRvAdapter mAdapter;
+    private ZhiHuNewsAdapter mAdapter;
 
 
     public ZhiHuHomeFragment() {
@@ -144,7 +141,7 @@ public class ZhiHuHomeFragment extends BaseRxFragment implements ZhiHuHomeContra
 
         mPresenter = new ZhiHuHomePresenter(this);
 
-        mAdapter = new ZhiHuRvAdapter(R.layout.item_image_text);
+        mAdapter = new ZhiHuNewsAdapter(R.layout.item_image_text);
 
     }
 
@@ -157,9 +154,7 @@ public class ZhiHuHomeFragment extends BaseRxFragment implements ZhiHuHomeContra
 //        getActivity().getActionBar().setTitle("知乎日报");
 
 
-        //给RecyclerView item设置间距
-        int space = getResources().getDimensionPixelOffset(R.dimen.card_spacing);
-        rvZhihu.addItemDecoration(new SpaceItemDecoration(space));
+        rvZhihu.addItemDecoration(new SpaceItemDecoration(getActivity()));
         rvZhihu.setHasFixedSize(true);
         rvZhihu.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvZhihu.setAdapter(mAdapter);

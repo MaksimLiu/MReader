@@ -10,7 +10,6 @@ import android.view.KeyEvent;
 
 import com.maksimliu.mreader.common.AppConfig;
 import com.maksimliu.mreader.utils.MLog;
-import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
 
@@ -38,7 +37,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        MobclickAgent.onResume(this);
         loadData();
     }
 
@@ -49,7 +47,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        MobclickAgent.onPause(this);
     }
 
     protected void initListener() {

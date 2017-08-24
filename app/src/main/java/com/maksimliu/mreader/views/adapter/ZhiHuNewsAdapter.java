@@ -13,10 +13,10 @@ import com.maksimliu.mreader.bean.ZhiHuStories;
  * Created by MaksimLiu on 2017/3/18.
  */
 
-public class ZhiHuRvAdapter extends BaseQuickAdapter<ZhiHuStories, BaseViewHolder> {
+public class ZhiHuNewsAdapter extends BaseQuickAdapter<ZhiHuStories, BaseViewHolder> {
 
 
-    public ZhiHuRvAdapter(int layoutResId) {
+    public ZhiHuNewsAdapter(int layoutResId) {
         super(layoutResId);
     }
 

@@ -143,6 +143,8 @@ public class PhotoViewerActivity extends BaseActivity {
                 FileUtil.saveImage(desc, bitmap);
                 Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
                 break;
+            default:
+                break;
 
 
         }
