@@ -18,7 +18,6 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.maksimliu.mreader.base.BaseActivity;
 import com.maksimliu.mreader.utils.FileUtil;
-import com.maksimliu.mreader.utils.MLog;
 
 import java.io.File;
 
@@ -80,7 +79,6 @@ public class PhotoViewerActivity extends BaseActivity {
         imgUrl = getIntent().getStringExtra("imgUrl");
         desc = getIntent().getStringExtra("desc");
 
-        MLog.i(desc);
         Glide.with(this).load(imgUrl).asBitmap().into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {

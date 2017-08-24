@@ -1,12 +1,12 @@
 package com.maksimliu.mreader.gank;
 
+import com.maksimliu.lib.utils.LogUtil;
 import com.maksimliu.mreader.api.GankApi;
 import com.maksimliu.mreader.bean.BaseGankBean;
 import com.maksimliu.mreader.bean.GankCategoryBean;
 import com.maksimliu.mreader.network.GankHttpRequest;
 import com.maksimliu.mreader.rx.BaseGankObserver;
 import com.maksimliu.mreader.rx.RxSchedulers;
-import com.maksimliu.mreader.utils.MLog;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class GankCategoryPresenter implements GankCategoryContract.Presenter {
 
                         mView.bindData(data);
                         mView.setIsLoading(false);
-                        MLog.i(mView.getClass().getSimpleName());
+                        LogUtil.i(mView.getClass().getSimpleName());
                     }
 
                     @Override

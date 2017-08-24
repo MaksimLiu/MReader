@@ -1,6 +1,7 @@
 package com.maksimliu.mreader.rx;
 
-import com.maksimliu.mreader.utils.ExceptionUtil;
+
+import com.maksimliu.lib.utils.ExceptionUtil;
 
 import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;

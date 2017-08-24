@@ -11,12 +11,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.maksimliu.lib.utils.SpaceItemDecoration;
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.base.BaseRxFragment;
 import com.maksimliu.mreader.bean.ZhiHuNewsBean;
 import com.maksimliu.mreader.bean.ZhiHuStories;
 import com.maksimliu.mreader.utils.DateUtil;
-import com.maksimliu.mreader.utils.SpaceItemDecoration;
 import com.maksimliu.mreader.views.adapter.ZhiHuNewsAdapter;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 

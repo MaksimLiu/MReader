@@ -3,22 +3,19 @@ package com.maksimliu.mreader.gank.meizhi;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.maksimliu.lib.utils.SpaceItemDecoration;
 import com.maksimliu.mreader.R;
 import com.maksimliu.mreader.api.GankApi;
 import com.maksimliu.mreader.base.LazyLoadFragment;
 import com.maksimliu.mreader.bean.GankCategoryBean;
 import com.maksimliu.mreader.gank.GankCategoryContract;
 import com.maksimliu.mreader.gank.GankCategoryPresenter;
-import com.maksimliu.mreader.utils.SpaceItemDecoration;
 import com.maksimliu.mreader.views.adapter.GankImageAdapter;
-import com.maksimliu.mreader.views.adapter.GankNewsAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;

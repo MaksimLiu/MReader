@@ -1,4 +1,4 @@
-package com.maksimliu.mreader.utils;
+package com.maksimliu.lib.utils;
 
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;

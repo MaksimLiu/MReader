@@ -1,7 +1,7 @@
 package com.maksimliu.mreader.rx;
 
+import com.maksimliu.lib.utils.ExceptionUtil;
 import com.maksimliu.mreader.bean.BaseGankBean;
-import com.maksimliu.mreader.utils.ExceptionUtil;
 
 import java.util.List;
 

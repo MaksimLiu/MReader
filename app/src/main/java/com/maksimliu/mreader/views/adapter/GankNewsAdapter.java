@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.customtabs.CustomTabsIntent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -60,6 +61,13 @@ public class GankNewsAdapter extends BaseMultiItemQuickAdapter<GankCategoryBean,
                 helper.setText(R.id.tv_gank_category_title, item.getDesc());
                 helper.setText(R.id.tv_gank_category_author, item.getWho());
 
+                helper.setOnClickListener(R.id.card_gank_category_text, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startCustomTabs(item.getUrl());
+                    }
+                });
+
                 break;
             case IMAGE_TEXT_VIEW_TYPE:
                 helper.setText(R.id.tv_gank_category_title, item.getDesc());
@@ -76,21 +84,22 @@ public class GankNewsAdapter extends BaseMultiItemQuickAdapter<GankCategoryBean,
                         context.startActivity(intent);
                     }
                 });
+
+                helper.setOnClickListener(R.id.card_gank_category_image, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startCustomTabs(item.getUrl());
+                    }
+                });
+
                 Glide.with(context).load(item.getImages().get(0)).into((ImageView) helper.getView(R.id.iv_gank_category));
                 break;
             default:
                 break;
         }
 
-        setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int i) {
 
 
-                startCustomTabs(item.getUrl());
-
-            }
-        });
     }
 
     private void startCustomTabs(String url) {

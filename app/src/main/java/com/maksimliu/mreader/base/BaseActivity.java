@@ -8,8 +8,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 
+import com.maksimliu.lib.utils.LogUtil;
 import com.maksimliu.mreader.common.AppConfig;
-import com.maksimliu.mreader.utils.MLog;
 
 import butterknife.ButterKnife;
 
@@ -71,7 +71,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onKeyDown(keyCode, event);
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 
-            MLog.i("onKeyDown   " + getSupportFragmentManager().getBackStackEntryCount());
+            LogUtil.i("onKeyDown   " + getSupportFragmentManager().getBackStackEntryCount());
             //当后退栈最后一个Fragment执行返回键时，结束Activity，避免空白页面
             if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
                 finish();

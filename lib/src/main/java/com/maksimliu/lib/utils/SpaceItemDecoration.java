@@ -1,11 +1,11 @@
-package com.maksimliu.mreader.utils;
+package com.maksimliu.lib.utils;
 
 import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.maksimliu.mreader.R;
+import com.maksimliu.lib.R;
 
 /**
  * Created by MaksimLiu on 2017/3/5.
