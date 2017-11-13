@@ -1,7 +1,9 @@
 apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion '26.0.2'
+
+    flavorDimensions "default"
 
     signingConfigs {
         release {
@@ -19,6 +21,7 @@ android {
         versionCode 1
         versionName "0.2.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -29,7 +32,9 @@ android {
 
     //友盟多渠道打包
     productFlavors {
-        coolapk {}
+        coolapk {
+            dimension "default"
+        }
     }
 
     productFlavors.all { flavor ->
